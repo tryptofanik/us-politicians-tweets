@@ -10,7 +10,7 @@
         "NiFiInstanceType": {
             "Description": "NiFi EC2 instance type. For test it can be t3.micro, however a t3.large is recommended in production.",
             "Type": "String",
-            "Default": "t3.micro"
+            "Default": "t2.micro"
         },
         "NiFiAMI": {
             "Description": "NiFi AMI",
