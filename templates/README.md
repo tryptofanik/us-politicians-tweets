@@ -17,7 +17,7 @@ To initiate the template, please follow the steps:
 
 #### Possible problems
 ##### NifiRole
-In case you have to create the `NifiRole` from the beggining (e.g. we switched the accounts), please attach a following policy to it:
+In case you have to create the `NifiRole` from the beginning (e.g. we switched the accounts), please attach a following policy to it:
   ```
   {
     "Version": "2012-10-17",
@@ -47,6 +47,7 @@ In case you have to create the `NifiRole` from the beggining (e.g. we switched t
 }
   ```
 ##### Key-pair
-If you would like to ssh into the instance, the `nifi` key-pair can be downloaded from [there](https://drive.google.com/drive/folders/1xqXe1HtXGEm3rLEWXnILUifuVz9---C_?usp=sharing)
-In case we switched accounts, please reupload the .pem key-pair.
+If you would like to ssh into the instance, the `nifi` key-pair can be downloaded from [there](https://drive.google.com/drive/folders/1xqXe1HtXGEm3rLEWXnILUifuVz9---C_?usp=sharing).
+
+In case we switched accounts, please reupload the .pem key-pair in [AWS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#how-to-generate-your-own-key-and-import-it-to-aws).
   
