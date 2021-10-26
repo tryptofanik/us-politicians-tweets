@@ -8,12 +8,12 @@
             "ConstraintDescription": "must be the name of an existing EC2 KeyPair."
         },
         "NiFiInstanceType": {
-            "Description": "NiFi EC2 instance type. For test it can be t3.micro, however a t3.large is recommended in production.",
+            "Description": "NiFi EC2 instance type. For test it can be t2.micro, however a t2.large is recommended in production.",
             "Type": "String",
             "Default": "t2.micro"
         },
         "NiFiAMI": {
-            "Description": "NiFi AMI",
+            "Description": "Instance AMI - by default Ubuntu 18. Changing this may require changes in user data (in template)",
             "Type": "String",
             "Default": "ami-0747bdcabd34c712a"
         },
