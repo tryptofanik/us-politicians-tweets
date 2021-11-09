@@ -27,15 +27,15 @@ def get_credentials():
     ssm = boto3.client("ssm", region_name='us-east-1')
     return {
         'consumer_key': ssm.get_parameter(Name="consumer_key")["Parameter"]["Value"],
-        'consumer_secret': ssm.get_parameter(Name="consumer_key")["Parameter"]["Value"],
+        'consumer_secret': ssm.get_parameter(Name="consumer_secret")["Parameter"]["Value"],
         'access_token': ssm.get_parameter(Name="access_token")["Parameter"]["Value"],
         'access_token_secret': ssm.get_parameter(Name="access_token_secret")["Parameter"]["Value"],
     }
 
 def main():
-    os.mkdir('saved_tweets')
+    os.makedirs('saved_tweets', exist_ok=True)
     credentials = get_credentials()
-    accounts = pd.read_csv('../accounts.csv')
+    accounts = pd.read_csv('accounts.csv')
     stream = StreamListener(
         **credentials
     )
