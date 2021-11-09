@@ -18,7 +18,14 @@ class StreamListener(tweepy.Stream):
 
     def on_status(self, status):
         print(status.text)
-        data = {field: str(getattr(status, field)) for field in self.fileds}
+        data = {
+            'text': status.text,
+            'id': status.id,
+            'created_at': str(status.created_at),
+            'geo': status.geo,
+            'lang': status.lang,
+            'user': status.user.screen_name
+        }
         self.send_data(data)
         with open(f'{self.save_path}/{status.id}.json', 'w') as f:
             json.dump(data, f)
@@ -41,6 +48,7 @@ def main():
     )
     stream.filter(
         follow=accounts.id.tolist(),
+        filter_level='medium'
     )
 
 if __name__ == '__main__':
