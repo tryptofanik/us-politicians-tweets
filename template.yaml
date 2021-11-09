@@ -21,6 +21,7 @@ Resources:
   ScrapperRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: 'ScrapperRole'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -32,9 +33,25 @@ Resources:
               - 'sts:AssumeRole'
       Path: /
 
+  TwitterStreamerRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'TwitterStreamerRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
   GetCurrentUserDataRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: 'GetCurrentUserDataRole'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -49,6 +66,7 @@ Resources:
   TweetsReaderRole:
     Type: 'AWS::IAM::Role'
     Properties:
+      RoleName: 'TweetsReaderRole'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -93,6 +111,38 @@ Resources:
       Roles:
         - !Ref ScrapperRole
         - !Ref GetCurrentUserDataRole
+        - !Ref TwitterStreamerRole
+
+  RunEC2Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: RunEC2Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ec2:RunInstances'
+            - 'ec2:AttachVolume'
+            - 'ec2:CreateVolume'
+            - 'ec2:CreateSecurityGroup'
+          Resource: '*'
+      Roles:
+        - !Ref TwitterStreamerRole
+
+  ReadS3Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadS3Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource: 'arn:aws:s3:::danonki-code/'
+      Roles:
+        - !Ref TwitterStreamerRole
 
   ReadTweetsPolicy:
     Type: 'AWS::IAM::Policy'
@@ -135,6 +185,7 @@ Resources:
             - Arn
       Roles:
         - !Ref ScrapperRole
+        - !Ref TwitterStreamerRole
 
 
   TwitterAPIExtractor:
@@ -165,3 +216,42 @@ Resources:
       Name: consumer_secret
       Type: String
       Value: None
+
+  TwitterStreamerSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: 'TwitterStreamerSG'
+      GroupDescription: 'SG for TwitterStreamer'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  TwitterStreamerEC2:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      SecurityGroups: 
+        - !Ref TwitterStreamerSG
+      ImageId: 'ami-083654bd07b5da81d'
+      KeyName: 'test_aws_scraper'
+      UserData:
+        !Base64 |
+        #!/bin/bash
+        sudo apt update
+        sudo apt install python3-pip -y
+        cd /home/ubuntu
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
+        cd us-politicians-tweets
+        pip install -r requirements.txt
+        python3 stream/twitter_stream.py
+
