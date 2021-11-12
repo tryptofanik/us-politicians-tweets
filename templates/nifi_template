@@ -82,6 +82,10 @@ Resources:
           ToPort: '22'
           FromPort: '22'
           CidrIp: !Ref Location
+        - IpProtocol: tcp
+          ToPort: '7001'
+          FromPort: '7001'
+          CidrIp: !Ref Location
     Metadata:
       'AWS::CloudFormation::Designer':
         id: 85dab07c-2417-4eb4-8b2a-a07c80bf0643
