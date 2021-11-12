@@ -1,20 +1,24 @@
 import json
 import os
-
+import requests
 import boto3
 import pandas as pd
 import tweepy
 
 
 class StreamListener(tweepy.Stream):
-    
+
     def __init__(self, save_path='saved_tweets', **kwargs):
         super().__init__(**kwargs)
         self.save_path = save_path
         self.fileds = ['text', 'id', 'created_at', 'user', 'geo', 'lang']
-    
-    def send_data(self, data):
-        pass
+
+    def send_data(self, data, nifi_instance_public_ip):
+        ## TODO change the nifi template so it saves the ip address to ssm as a parameter
+        ## then pass it to this method via nifi_instance_public_ip
+        r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
+                          json=data)
+        print(r.status_code)
 
     def on_status(self, status):
         print(status.text)
@@ -26,9 +30,10 @@ class StreamListener(tweepy.Stream):
             'lang': status.lang,
             'user': status.user.screen_name
         }
-        self.send_data(data)
+        self.send_data(data=data, nifi_instance_public_ip="X.X.X.X")  # look at TODO
         with open(f'{self.save_path}/{status.id}.json', 'w') as f:
             json.dump(data, f)
+
 
 def get_credentials():
     ssm = boto3.client("ssm", region_name='us-east-1')
@@ -39,6 +44,7 @@ def get_credentials():
         'access_token_secret': ssm.get_parameter(Name="access_token_secret")["Parameter"]["Value"],
     }
 
+
 def main():
     os.makedirs('saved_tweets', exist_ok=True)
     credentials = get_credentials()
@@ -48,8 +54,8 @@ def main():
     )
     stream.filter(
         follow=accounts.id.tolist(),
-        filter_level='medium'
     )
+
 
 if __name__ == '__main__':
     main()
