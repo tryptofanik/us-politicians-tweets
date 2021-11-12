@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?><flowController encoding-version="1.4">
+  <maxTimerDrivenThreadCount>10</maxTimerDrivenThreadCount>
+  <maxEventDrivenThreadCount>1</maxEventDrivenThreadCount>
+  <registries/>
+  <parameterContexts/>
+  <rootGroup>
+    <id>15e85cfa-017d-1000-34e5-2c1ebd271224</id>
+    <name>NiFi Flow</name>
+    <position x="0.0" y="0.0"/>
+    <comment/>
+    <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
+    <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
+    <processor>
+      <id>15e95a91-017d-1000-7429-390e7d31b60f</id>
+      <name>PutDynamoDB</name>
+      <position x="336.0" y="8.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.aws.dynamodb.PutDynamoDB</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-aws-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Table Name</name>
+        <value>Tweets</value>
+      </property>
+      <property>
+        <name>Hash Key Name</name>
+        <value>id</value>
+      </property>
+      <property>
+        <name>Range Key Name</name>
+      </property>
+      <property>
+        <name>Hash Key Value</name>
+        <value>$.id</value>
+      </property>
+      <property>
+        <name>Range Key Value</name>
+        <value>${dynamodb.item.range.key.value}</value>
+      </property>
+      <property>
+        <name>Hash Key Value Type</name>
+        <value>string</value>
+      </property>
+      <property>
+        <name>Range Key Value Type</name>
+        <value>string</value>
+      </property>
+      <property>
+        <name>Json Document attribute</name>
+        <value>$</value>
+      </property>
+      <property>
+        <name>Character set of document</name>
+        <value>UTF-8</value>
+      </property>
+      <property>
+        <name>Batch items for each request (between 1 and 50)</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>Region</name>
+        <value>us-east-1</value>
+      </property>
+      <property>
+        <name>Access Key</name>
+      </property>
+      <property>
+        <name>Secret Key</name>
+      </property>
+      <property>
+        <name>Credentials File</name>
+      </property>
+      <property>
+        <name>AWS Credentials Provider service</name>
+        <value>15ea194f-017d-1000-2a8f-e937786a45d4</value>
+      </property>
+      <property>
+        <name>Communications Timeout</name>
+        <value>30 secs</value>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>proxy-configuration-service</name>
+      </property>
+      <property>
+        <name>Proxy Host</name>
+      </property>
+      <property>
+        <name>Proxy Host Port</name>
+      </property>
+      <property>
+        <name>proxy-user-name</name>
+      </property>
+      <property>
+        <name>proxy-user-password</name>
+      </property>
+      <autoTerminatedRelationship>unprocessed</autoTerminatedRelationship>
+      <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+    </processor>
+    <processor>
+      <id>15e8deea-017d-1000-80c6-469decdf2b82</id>
+      <name>ListenHTTP</name>
+      <position x="368.0" y="360.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.standard.ListenHTTP</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-standard-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Base Path</name>
+        <value>twitterListener</value>
+      </property>
+      <property>
+        <name>Listening Port</name>
+        <value>7001</value>
+      </property>
+      <property>
+        <name>health-check-port</name>
+      </property>
+      <property>
+        <name>Max Data to Receive per Second</name>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>client-authentication</name>
+        <value>AUTO</value>
+      </property>
+      <property>
+        <name>Authorized DN Pattern</name>
+        <value>.*</value>
+      </property>
+      <property>
+        <name>Max Unconfirmed Flowfile Time</name>
+        <value>60 secs</value>
+      </property>
+      <property>
+        <name>HTTP Headers to receive as Attributes (Regex)</name>
+      </property>
+      <property>
+        <name>Return Code</name>
+        <value>200</value>
+      </property>
+      <property>
+        <name>multipart-request-max-size</name>
+        <value>1 MB</value>
+      </property>
+      <property>
+        <name>multipart-read-buffer-size</name>
+        <value>512 KB</value>
+      </property>
+    </processor>
+    <connection>
+      <id>15e96c2b-017d-1000-21c6-4ab0f93c8817</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>15e8deea-017d-1000-80c6-469decdf2b82</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>15e95a91-017d-1000-7429-390e7d31b60f</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship>success</relationship>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <controllerService>
+      <id>15ea194f-017d-1000-2a8f-e937786a45d4</id>
+      <name>AWSCredentialsProviderControllerService</name>
+      <comment/>
+      <class>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderControllerService</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-aws-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <enabled>true</enabled>
+      <property>
+        <name>default-credentials</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>Access Key</name>
+      </property>
+      <property>
+        <name>Secret Key</name>
+      </property>
+      <property>
+        <name>Credentials File</name>
+      </property>
+      <property>
+        <name>profile-name</name>
+      </property>
+      <property>
+        <name>anonymous-credentials</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>Assume Role ARN</name>
+      </property>
+      <property>
+        <name>Assume Role Session Name</name>
+      </property>
+      <property>
+        <name>Session Time</name>
+        <value>3600</value>
+      </property>
+      <property>
+        <name>assume-role-external-id</name>
+      </property>
+      <property>
+        <name>assume-role-proxy-host</name>
+      </property>
+      <property>
+        <name>assume-role-proxy-port</name>
+      </property>
+      <property>
+        <name>assume-role-sts-endpoint</name>
+      </property>
+    </controllerService>
+  </rootGroup>
+  <controllerServices/>
+  <reportingTasks/>
+</flowController>
