@@ -14,9 +14,11 @@ class StreamListener(tweepy.Stream):
         self.fileds = ['text', 'id', 'created_at', 'user', 'geo', 'lang']
 
     def send_data(self, data, nifi_instance_public_ip):
+    	ssm = boto3.client("ssm", region_name='us-east-1')
         ## TODO change the nifi template so it saves the ip address to ssm as a parameter
         ## then pass it to this method via nifi_instance_public_ip
-        r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
+        NIFI_PUBLIC_IP = ssm.get_parameter(Name="NIFI_PUBLIC_IP")["Parameter"]["Value"]
+        r = requests.post(f"http://{NIFI_PUBLIC_IP}:7001/twitterListener",
                           json=data)
         print(r.status_code)
 
