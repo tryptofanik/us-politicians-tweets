@@ -49,14 +49,15 @@ class StreamListener(praw.Reddit):
     def __init__(self, subreddits='republicans+democrats', **kwargs):
         super().__init__(**kwargs)
         self.num_posts_collected = 0
-        self.posts_stream = r.subreddit(subreddits)
+        self.posts_stream = self.subreddit(subreddits)
 
     def send_data(self, data, nifi_instance_public_ip):
         r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
                           json=data)
         print(r.status_code)
 
-    def run_stream(nifi_instance_public_ip, kinesis_client):
+    def run_stream(self, nifi_instance_public_ip):
+        kinesis_client = boto3.client('kinesis', region_name='us-east-1')
         try:
             for submission in self.posts_stream.stream.submissions():
                 txt = submission.selftext if len(submission.selftext) > 0 else submission.url
@@ -98,7 +99,6 @@ def get_kinesis():
     return ssm.get_parameter(Name="NIFI_PUBLIC_IP")["Parameter"]["Value"]
 
 def main():
-    kinesis_client = boto3.client('kinesis', region_name='us-east-1')
     credentials = get_credentials()
     nifi_public_ip = get_nifi_public_ip()
     stream = StreamListener(
@@ -106,7 +106,6 @@ def main():
     )
     stream.run_stream(
         nifi_public_ip,
-        kinesis_client
     )
 
 if __name__ == '__main__':
