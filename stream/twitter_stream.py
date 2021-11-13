@@ -8,17 +8,14 @@ import tweepy
 
 class StreamListener(tweepy.Stream):
 
-    def __init__(self, save_path='saved_tweets', **kwargs):
+    def __init__(self, nifi_instance_public_ip, save_path='saved_tweets', **kwargs):
         super().__init__(**kwargs)
         self.save_path = save_path
         self.fileds = ['text', 'id', 'created_at', 'user', 'geo', 'lang']
+        self.nifi_instance_public_ip = nifi_instance_public_ip
 
     def send_data(self, data, nifi_instance_public_ip):
-    	ssm = boto3.client("ssm", region_name='us-east-1')
-        ## TODO change the nifi template so it saves the ip address to ssm as a parameter
-        ## then pass it to this method via nifi_instance_public_ip
-        NIFI_PUBLIC_IP = ssm.get_parameter(Name="NIFI_PUBLIC_IP")["Parameter"]["Value"]
-        r = requests.post(f"http://{NIFI_PUBLIC_IP}:7001/twitterListener",
+        r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
                           json=data)
         print(r.status_code)
 
@@ -32,7 +29,7 @@ class StreamListener(tweepy.Stream):
             'lang': status.lang,
             'user': status.user.screen_name
         }
-        self.send_data(data=data, nifi_instance_public_ip="X.X.X.X")  # look at TODO
+        self.send_data(data=data, nifi_instance_public_ip=self.nifi_instance_public_ip)  # look at TODO
         with open(f'{self.save_path}/{status.id}.json', 'w') as f:
             json.dump(data, f)
 
@@ -46,12 +43,18 @@ def get_credentials():
         'access_token_secret': ssm.get_parameter(Name="access_token_secret")["Parameter"]["Value"],
     }
 
+def get_nifi_public_ip():
+    ssm = boto3.client("ssm", region_name='us-east-1')
+    return ssm.get_parameter(Name="NIFI_PUBLIC_IP")["Parameter"]["Value"]
+
 
 def main():
     os.makedirs('saved_tweets', exist_ok=True)
     credentials = get_credentials()
+    nifi_public_ip = get_nifi_public_ip()
     accounts = pd.read_csv('accounts.csv')
     stream = StreamListener(
+    	nifi_public_ip,
         **credentials
     )
     stream.filter(
