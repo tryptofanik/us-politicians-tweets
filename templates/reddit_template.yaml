@@ -119,14 +119,12 @@ Resources:
 
         cd /home/ubuntu
 
-        mkdir reddit
-        cd reddit
+        git clone -b init_template https://github.com/tryptofanik/us-politicians-tweets.git
+        cd us-politicians-tweets
 
-        aws s3 cp s3://danonki-code/reddit-stream.py .
+        chmod 777 stream/reddit-stream.py
 
-        chmod 777 reddit-stream.py
-
-        nohup python3 reddit-stream.py &>> realtime-comment-stream-log.txt
+        nohup python3 stream/reddit-stream.py &>> realtime-comment-stream-log.txt
   rInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
