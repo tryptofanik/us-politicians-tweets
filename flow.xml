@@ -214,7 +214,7 @@
       <enabled>true</enabled>
       <property>
         <name>default-credentials</name>
-        <value>true</value>
+        <value>false</value>
       </property>
       <property>
         <name>Access Key</name>
@@ -227,6 +227,7 @@
       </property>
       <property>
         <name>profile-name</name>
+        <value>NiFiRole1</value>
       </property>
       <property>
         <name>anonymous-credentials</name>
