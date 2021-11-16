@@ -108,7 +108,7 @@ Resources:
             - |
               apt install openjdk-8-jre-headless -y; 
             - >
-              echo -e "\nJAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"\n" >>
+              echo -e "\nJAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"\n" >>
               /etc/environment; 
             - |
               source /etc/environment; 
