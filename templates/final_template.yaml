@@ -87,50 +87,51 @@ Resources:
   NiFi1Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
-      InstanceType: 't2.micro'
+      InstanceType: 't2.small'
       SecurityGroupIds:
         - !Ref NiFiInstanceSecurityGroup
       IamInstanceProfile: !Ref NiFiInstanceProfile
       KeyName: 'nifi'
       ImageId: 'ami-0747bdcabd34c712a'
-      UserData: !Base64 
-        'Fn::Join':
-          - ''
-          - - |
-              #!/bin/bash -xe
-            - |
-              sudo su ;
-            - >
-              exec > >(tee /var/log/user-data.log|logger -t user-data -s
-              2>/dev/console) 2>&1
-            - |
-              apt-get update -y 
-            - |
-              apt install openjdk-8-jre-headless -y; 
-            - >
-              echo -e "\nJAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"\n" >>
-              /etc/environment; 
-            - |
-              source /etc/environment; 
-            - >
-              wget
-              https://archive.apache.org/dist/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
-              ;
-            - |
-              tar -xvf  nifi-1.13.2-bin.tar.gz;
-            - |
-              cd nifi-1.13.2/;
-            - >
-              sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/'
-              ./conf/nifi.properties;
-            - >
-              wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
-            - |
-              gzip flow.xml
-            - |
-              mv flow.xml.gz ./conf/flow.xml.gz
-            - |
-              ./bin/nifi.sh start; 
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+
+          sudo su
+
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+          apt-get update -y
+
+          apt install openjdk-8-jre-headless -y
+
+          echo -e "\nJAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"\n" >> /etc/environment
+
+          source /etc/environment
+
+          wget https://archive.apache.org/dist/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
+
+          tar -xvf /nifi-1.13.2-bin.tar.gz
+
+          cd /nifi-1.13.2/
+
+          sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/' ./conf/nifi.properties
+
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
+
+          gzip flow.xml
+
+          mv flow.xml.gz ./conf/flow.xml.gz
+
+          mkdir ~/.aws
+
+          echo -e "[default]\n" > ~/.aws/credentials
+
+          apt install jq -y
+
+          curl http://169.254.169.254/latest/meta-data/iam/security-credentials/NiFiRole1 | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> ~/.aws/credentials
+
+          ./bin/nifi.sh start
 
   NiFiInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
