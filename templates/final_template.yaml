@@ -585,4 +585,9 @@ Resources:
         pip install -r requirements.txt
 
         python3 stream/twitter_stream.py
-    
+
+#Outputs
+Outputs:
+  NifiUIUrl:
+    Description: Link to the Nifi UI
+    Value: !Sub "http://${NiFi1Instance.PublicIp}:8080/nifi"

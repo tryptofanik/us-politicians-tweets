@@ -170,3 +170,8 @@ Resources:
             - Arn
       Roles:
         - !Ref NiFiRole1
+#Outputs
+Outputs:
+  NifiUIUrl:
+    Description: Link to the Nifi UI
+    Value: !Sub "http://${NiFi1Instance.PublicIp}:8080/nifi"
