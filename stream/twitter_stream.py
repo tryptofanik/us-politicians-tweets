@@ -26,12 +26,12 @@ class StreamListener(tweepy.Stream):
         data = {
             "text": status.text,
             "id": status.id,
-            "created_at": int(status.created_at.timestamp()),
+            "extractionTime": int(status.created_at.timestamp()),
             "geo": status.geo,
             "lang": status.lang,
             "user": status.user.screen_name,
         }
-        self.send_data(data=data)  # look at TODO
+        self.send_data(data=data)
         with open(f"{self.save_path}/{status.id}.json", "w") as f:
             json.dump(data, f)
 
