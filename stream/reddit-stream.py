@@ -10,6 +10,8 @@ import logging
 import pandas as pd
 import random
 import decimal
+import requests
+
 
 LOG_FILENAME = '/tmp/reddit-stream.log'
 logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)

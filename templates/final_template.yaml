@@ -179,7 +179,7 @@ Resources:
         cd /home/ubuntu
 
 
-        git clone https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git/reddit_nifi
 
         git checkout reddit_nifi
 
