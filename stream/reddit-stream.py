@@ -29,21 +29,6 @@ def remove_emoji(comment):
     return cleaned_comment
 
 
-def process_or_store(comment, kinesis_client):
-    try:
-        response = kinesis_client.put_record(
-            StreamName='reddit-stream',
-            Data=json.dumps(comment, ensure_ascii=False).encode('utf8'),
-            PartitionKey=str(random.randrange(100))
-            )
-        logging.info(response)
-        print(response)
-    except Exception as e:
-        logging.exception("Problem pushing to Kinesis")
-        print("Problem pushing to Kinesis")
-        print(e)
-
-
 class StreamListener(praw.Reddit):
 
     def __init__(self, subreddits='republicans+democrats', **kwargs):
@@ -52,7 +37,7 @@ class StreamListener(praw.Reddit):
         self.posts_stream = self.subreddit(subreddits)
 
     def send_data(self, data, nifi_instance_public_ip):
-        r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
+        r = requests.post(f"http://{nifi_instance_public_ip}:7002/redditListener",
                           json=data)
         print(r.status_code)
 
@@ -73,8 +58,7 @@ class StreamListener(praw.Reddit):
                                }
 
                 self.num_posts_collected = self.num_posts_collected + 1
-                process_or_store(commentjson, kinesis_client)
-                #self.send_data(data=data, nifi_instance_public_ip=nifi_instance_public_ip)
+                self.send_data(data=commentjson, nifi_instance_public_ip=nifi_instance_public_ip)
 
                 time.sleep(0.1)
         except Exception as e:
