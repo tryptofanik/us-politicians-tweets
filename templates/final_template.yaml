@@ -254,6 +254,9 @@ Resources:
 
   RedditLambdaFunction:
     Type: 'AWS::Lambda::Function'
+    DependsOn: 
+      - GetFromKinesisPolicy
+      - LambdaRole
     Properties:
       Code:
         S3Bucket: danonki-code
@@ -413,7 +416,7 @@ Resources:
         - !Ref TwitterStreamerRole
         - !Ref ReddditStreamerRole
         - !Ref LambdaRole
-            
+
   RunEC2Policy:
     Type: 'AWS::IAM::Policy'
     Properties:
@@ -469,6 +472,7 @@ Resources:
         - !Ref TweetsReaderRole
         - !Ref GetCurrentUserDataRole
         - !Ref NiFiRole1
+        - !Ref LambdaRole
     
   WriteDynamoDBPolicy:
     Type: 'AWS::IAM::Policy'
@@ -491,6 +495,7 @@ Resources:
         - !Ref ScrapperRole
         - !Ref TwitterStreamerRole
         - !Ref NiFiRole1
+        - !Ref LambdaRole
     
   TwitterAPIExtractor:
     Type: 'AWS::Lambda::Function'

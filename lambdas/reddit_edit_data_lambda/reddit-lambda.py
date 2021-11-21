@@ -19,7 +19,7 @@ def get_nifi_public_ip():
     return ssm.get_parameter(Name="NIFI_PUBLIC_IP")["Parameter"]["Value"]
 
 def lambda_handler(event, context):
-	nifi_public_ip = get_nifi_public_ip()
+	#nifi_public_ip = get_nifi_public_ip()
     try: 
         for record in event["Records"]:
             decoded_data = base64.b64decode(record["kinesis"]["data"]).decode("utf-8")
