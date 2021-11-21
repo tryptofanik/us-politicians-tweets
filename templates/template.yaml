@@ -273,7 +273,7 @@ Resources:
         sudo apt update
         sudo apt install python3-pip -y
         cd /home/ubuntu
-        git clone -b init_template https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
         cd us-politicians-tweets
         pip install -r requirements.txt
         python3 stream/twitter_stream.py

@@ -150,6 +150,10 @@ Resources:
           ToPort: '7001'
           FromPort: '7001'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '7002'
+          FromPort: '7002'
+          CidrIp: 0.0.0.0/0
 # Reddit kinesis data stream
   RedditKinesisDataStream:
     Type: 'AWS::Kinesis::Stream'
@@ -228,8 +232,7 @@ Resources:
         cd /home/ubuntu
 
 
-        git clone -b init_template
-        https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
 
         cd us-politicians-tweets
 
@@ -255,9 +258,11 @@ Resources:
             - 'kinesis:DescribeStream'
             - 'kinesis:GetShardIterator'
             - 'kinesis:GetRecords'
+            - 'kinesis:PutRecords'
+            - 'kinesis:PutRecord'
             - 'kinesis:ListShards'
             - 'kinesis:ListStreams'
-            - 'kinesis:*' 
+            - 'kinesis:*' #temporary solution
           Resource: '*'
       Roles:
         - !Ref NiFiRole1
@@ -531,12 +536,14 @@ Resources:
 
         cd /home/ubuntu
 
-        git clone -b init_template
-        https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
 
         cd us-politicians-tweets
 
         pip install -r requirements.txt
 
         python3 stream/twitter_stream.py
-    
+Outputs:
+  NiFiUIUrl:
+    Description: Link to NiFi UI
+    Value: !Sub "http://${NiFi1Instance.PublicIp}:8080/nifi"
