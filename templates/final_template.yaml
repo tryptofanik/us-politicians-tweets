@@ -412,7 +412,8 @@ Resources:
         - !Ref GetCurrentUserDataRole
         - !Ref TwitterStreamerRole
         - !Ref ReddditStreamerRole
-    
+        - !Ref LambdaRole
+            
   RunEC2Policy:
     Type: 'AWS::IAM::Policy'
     Properties:
