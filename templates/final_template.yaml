@@ -228,8 +228,7 @@ Resources:
         cd /home/ubuntu
 
 
-        git clone -b init_template
-        https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
 
         cd us-politicians-tweets
 
@@ -577,8 +576,7 @@ Resources:
 
         cd /home/ubuntu
 
-        git clone -b init_template
-        https://github.com/tryptofanik/us-politicians-tweets.git
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
 
         cd us-politicians-tweets
 
