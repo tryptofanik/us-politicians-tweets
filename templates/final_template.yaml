@@ -1,59 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
-# Parameters
-Parameters:
-  pRedditUsernameInput:
-    Description: Reddit username
-    Type: String
-    Default: None
-  pRedditPasswordInput:
-    Description: Reddit password
-    Type: String
-    Default: None
-  pRedditClientIDInput:
-    Description: Reddit client id
-    Type: String
-    Default: None
-  pRedditAppSecretInput:
-    Description: Reddit application secret
-    Type: String
-    Default: None
-  pRedditUserAgentInput:
-    Description: Reddit user agent
-    Type: String
-    Default: None
 # Resources
 Resources:
-#Reddit Parameters
-  pRedditUsername:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_USER
-      Type: String
-      Value: !Ref pRedditUsernameInput
-  pRedditPassword:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_PASS
-      Type: String
-      Value: !Ref pRedditPasswordInput
-  pRedditClientID:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_CLIENT_ID
-      Type: String
-      Value: !Ref pRedditClientIDInput
-  pRedditAppSecret:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_SECRET
-      Type: String
-      Value: !Ref pRedditAppSecretInput
-  pRedditUserAgent:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_USER_AGENT
-      Type: String
-      Value: !Ref pRedditUserAgentInput
 #NiFi parameter
   pNiFiPublicIp:
     Type: 'AWS::SSM::Parameter'
