@@ -233,7 +233,55 @@ Resources:
           Resource: '*'
       Roles:
         - !Ref NiFiRole1
+        - !Ref LambdaRole
 
+
+  LambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: LambdaRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+
+  RedditLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Code:
+        S3Bucket: danonki-code
+        S3Key: reddit-lambda.zip
+      Handler: reddit-lambda.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 60
+    
+  RedditSourceMappingKinesisStream:
+    Type: 'AWS::Lambda::EventSourceMapping'
+    Properties:
+      BatchSize: 10
+      EventSourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:kinesis:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':stream/'
+            - Ref: RedditKinesisDataStream
+      FunctionName:
+        'Fn::GetAtt':
+          - RedditLambdaFunction
+          - Arn
+      StartingPosition: TRIM_HORIZON
     
   TweetsDynamoDBTable:
     Type: 'AWS::DynamoDB::Table'
