@@ -273,12 +273,15 @@ Resources:
             - 'kinesis:DescribeStream'
             - 'kinesis:GetShardIterator'
             - 'kinesis:GetRecords'
+            - 'kinesis:PutRecords'
+            - 'kinesis:PutRecord'
             - 'kinesis:ListShards'
             - 'kinesis:ListStreams'
             - 'kinesis:*' #temporary solution
           Resource: '*'
       Roles:
         - !Ref LambdaRole
+        - !Ref NiFiRole1
     
 
   RedditLambdaFunction:
