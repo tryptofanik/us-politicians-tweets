@@ -150,6 +150,10 @@ Resources:
           ToPort: '7001'
           FromPort: '7001'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '7002'
+          FromPort: '7002'
+          CidrIp: 0.0.0.0/0
 # Reddit kinesis data stream
   RedditKinesisDataStream:
     Type: 'AWS::Kinesis::Stream'
