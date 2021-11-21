@@ -101,7 +101,25 @@ Resources:
           ToPort: '7002'
           FromPort: '7002'
           CidrIp: 0.0.0.0/0
+
+
 # Reddit kinesis data stream
+  RedditDynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: RedditPosts
+      AttributeDefinitions:
+        - AttributeName: subreddit
+          AttributeType: S
+        - AttributeName: created
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: subreddit
+          KeyType: HASH
+        - AttributeName: created
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
   RedditKinesisDataStream:
     Type: 'AWS::Kinesis::Stream'
     Properties:
