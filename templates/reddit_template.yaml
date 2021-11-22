@@ -1,0 +1,274 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Deploys a single instance for Reddit stream.
+
+Parameters:
+  
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  
+  RedditInstanceType:
+    Description: >-
+      EC2 instance type. For test it can be t2.micro, however a t2.large is
+      recommended in production.
+    Type: String
+    Default: t2.micro
+  
+  RedditAMI:
+    Description: >-
+      Instance AMI - by default Ubuntu 18. Changing this may require changes in
+      user data (in template)
+    Type: String
+    Default: ami-0747bdcabd34c712a
+  
+  Location:
+    Description: The IP address range that can be used for Reddit and SSH.
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+  pRedditUsernameInput:
+    Description: Reddit username
+    Type: String
+    Default: None
+  pRedditPasswordInput:
+    Description: Reddit password
+    Type: String
+    Default: None
+  pRedditClientIDInput:
+    Description: Reddit client id
+    Type: String
+    Default: None
+  pRedditAppSecretInput:
+    Description: Reddit application secret
+    Type: String
+    Default: None
+  pRedditUserAgentInput:
+    Description: Reddit user agent
+    Type: String
+    Default: None
+
+Resources:
+  pRedditUsername:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: REDDIT_USER
+      Type: String
+      Value: !Ref pRedditUsernameInput
+  pRedditPassword:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: REDDIT_PASS
+      Type: String
+      Value: !Ref pRedditPasswordInput
+  pRedditClientID:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: REDDIT_CLIENT_ID
+      Type: String
+      Value: !Ref pRedditClientIDInput
+  pRedditAppSecret:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: REDDIT_SECRET
+      Type: String
+      Value: !Ref pRedditAppSecretInput
+  pRedditUserAgent:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: REDDIT_USER_AGENT
+      Type: String
+      Value: !Ref pRedditUserAgentInput
+
+  KinesisStreamReddit:
+    Type: 'AWS::Kinesis::Stream'
+    Properties:
+      Name: reddit-stream
+      ShardCount: 1
+
+  rEC2RedditStreamingApp:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref RedditInstanceType
+      IamInstanceProfile: !Ref rEC2IamInstanceProfile
+      SecurityGroupIds:
+        - !Ref rInstanceSecurityGroup
+      KeyName: !Ref KeyName
+      ImageId: !Ref RedditAMI
+      UserData:
+        !Base64 |
+        #!/bin/bash
+        sudo apt update
+        sudo apt-get  install -y python3
+        
+        sudo apt-get install -y python3-pip
+        sudo apt-get install -y python3-distutils
+        sudo apt-get install -y python3-apt
+
+        python3 -m pip install praw
+        python3 -m pip install pandas
+        python3 -m pip install boto3
+
+        sudo apt-get install -y awscli
+        pip3 install --upgrade awscli
+
+        cd /home/ubuntu
+
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
+        cd us-politicians-tweets
+
+        chmod 777 stream/reddit-stream.py
+
+        nohup python3 stream/reddit-stream.py &>> realtime-comment-stream-log.txt
+  rInstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Group for Reddit instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          ToPort: '22'
+          FromPort: '22'
+          CidrIp: !Ref Location
+  rEC2IamInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref rEC2KinesisRole
+    DependsOn:
+      - rEC2KinesisRole
+  rEC2KinesisRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      Policies:
+        - PolicyName: kinesis_ec2
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'ec2:DeleteTags'
+                  - 'ec2:CreateTags'
+                  - 'ec2:DetachVolume'
+                  - 'ec2:AttachVolume'
+                  - 'ec2:AuthorizeSecurityGroupIngress'
+                  - 'ec2:DescribeInstances'
+                  - 'ec2:RunInstances'
+                  - 'ec2:ModifySecurityGroupRules'
+                  - 'ec2:DescribeSecurityGroups'
+                  - 'ec2:CreateVolume'
+                  - 'ec2:DescribeVolumeStatus'
+                  - 'ec2:DescribeSecurityGroupRules'
+                  - 'ec2:DescribeAvailabilityZones'
+                  - 'ec2:DescribeIamInstanceProfileAssociations'
+                  - 'ec2:CreateSecurityGroup'
+                  - 'ec2:DescribeVolumes'
+                  - 'ec2:DescribeKeyPairs'
+                  - 'iam:*'
+                  - 'kinesis:*'
+                  - 's3:*'
+                  - 'ssm:GetParameter'
+                  - 'ssm:GetParameters'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'ec2:CreateTags'
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    'ec2:CreateAction': RunInstances
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Policies:
+        - PolicyName: lambda_se_role
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:*'
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'kinesis:*'
+                Resource: '*'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+  RedditLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: 'danonki-code'
+        S3Key: 'reddit-lambda.zip'
+      Handler: reddit-lambda.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 60
+  MyEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 10
+      EventSourceArn:
+        Fn::Join:
+          - ""
+          -
+            - "arn:aws:kinesis:"
+            -
+              Ref: "AWS::Region"
+            - ":"
+            -
+              Ref: "AWS::AccountId"
+            - ":stream/"
+            -
+              Ref: KinesisStreamReddit
+      FunctionName:
+        Fn::GetAtt:
+          - "RedditLambdaFunction"
+          - "Arn"
+      StartingPosition: "TRIM_HORIZON"
+Outputs:
+  oInstanceId:
+    Description: InstanceId of the newly created EC2 instance
+    Value:
+      Ref: rEC2RedditStreamingApp
+  oAZ:
+    Description: Availability Zone of the newly created EC2 instance
+    Value:
+      'Fn::GetAtt':
+        - rEC2RedditStreamingApp
+        - AvailabilityZone
+  oPublicDNS:
+    Description: Public DNSName of the newly created EC2 instance
+    Value:
+      'Fn::GetAtt':
+        - rEC2RedditStreamingApp
+        - PublicDnsName
+  oPublicIP:
+    Description: Public IP address of the newly created EC2 instance
+    Value:
+      'Fn::GetAtt':
+        - rEC2RedditStreamingApp
+        - PublicIp
+    Export:
+      Name: !Sub '${AWS::StackName}-oPublicIP'

@@ -1,0 +1,280 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+
+  TweetsDynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: Tweets
+      AttributeDefinitions:
+        - AttributeName: user
+          AttributeType: S
+        - AttributeName: extractionTime
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: user
+          KeyType: HASH
+        - AttributeName: extractionTime
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  ScrapperRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'ScrapperRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  TwitterStreamerRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'TwitterStreamerRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  GetCurrentUserDataRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'GetCurrentUserDataRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  TweetsReaderRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: 'TweetsReaderRole'
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  InvokeScrapingPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: TweetsDynamoDBTable
+    Properties:
+      PolicyName: InvokeScrapingPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'lambda:InvokeFunction'
+            - 'lambda:InvokeAsync'
+          Resource: '*'
+      Roles:
+        - !Ref GetCurrentUserDataRole
+
+  ReadParametersPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadParametersPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ssm:GetParameterHistory'
+            - 'ssm:GetParametersByPath'
+            - 'ssm:GetParameters'
+            - 'ssm:GetParameter'
+          Resource: '*'
+      Roles:
+        - !Ref ScrapperRole
+        - !Ref GetCurrentUserDataRole
+        - !Ref TwitterStreamerRole
+
+  RunEC2Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: RunEC2Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ec2:RunInstances'
+            - 'ec2:AttachVolume'
+            - 'ec2:CreateVolume'
+            - 'ec2:CreateSecurityGroup'
+          Resource: '*'
+      Roles:
+        - !Ref TwitterStreamerRole
+
+  ReadS3Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadS3Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource: 'arn:aws:s3:::danonki-code/'
+      Roles:
+        - !Ref TwitterStreamerRole
+
+  ReadTweetsPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: TweetsDynamoDBTable
+    Properties:
+      PolicyName: ReadTweetsPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'dynamodb:Scan'
+            - 'dynamodb:Describe*'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Query'
+            - 'dynamodb:List*'
+          Resource: !GetAtt 
+            - TweetsDynamoDBTable
+            - Arn
+      Roles:
+        - !Ref TweetsReaderRole
+        - !Ref GetCurrentUserDataRole
+
+  WriteTweetsPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: TweetsDynamoDBTable
+    Properties:
+      PolicyName: WriteTweetsPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'dynamodb:BatchWriteItem'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:UpdateTable'
+          Resource: !GetAtt 
+            - TweetsDynamoDBTable
+            - Arn
+      Roles:
+        - !Ref ScrapperRole
+        - !Ref TwitterStreamerRole
+
+
+  TwitterAPIExtractor:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - ScrapperRole
+    Properties:
+      FunctionName: TwitterAPIExtractor
+      Runtime: python3.8
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt 
+        - ScrapperRole
+        - Arn
+      Code:
+        S3Bucket: danonki-code
+        S3Key: twitter_api_extractor.zip
+
+  # ParameterConsumerKey:
+  #   Type: 'AWS::SSM::Parameter'
+  #   Properties:
+  #     Name: consumer_key
+  #     Type: String
+  #     Value: None
+
+  # ParameterConsumerSecret:
+  #   Type: 'AWS::SSM::Parameter'
+  #   Properties:
+  #     Name: consumer_secret
+  #     Type: String
+  #     Value: None
+
+  # ParameterConsumerKey:
+  #   Type: 'AWS::SSM::Parameter'
+  #   Properties:
+  #     Name: access_token
+  #     Type: String
+  #     Value: None
+
+  # ParameterConsumerSecret:
+  #   Type: 'AWS::SSM::Parameter'
+  #   Properties:
+  #     Name: access_token_secret
+  #     Type: String
+  #     Value: None
+
+  TwitterStreamerSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: 'TwitterStreamerSG'
+      GroupDescription: 'SG for TwitterStreamer'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  TwitterStreamerInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: TwitterStreamerInstanceProfile
+      Path: /
+      Roles: 
+        - !Ref TwitterStreamerRole
+
+  TwitterStreamerEC2:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      IamInstanceProfile: !Ref TwitterStreamerInstanceProfile
+      SecurityGroups: 
+        - !Ref TwitterStreamerSG
+      ImageId: 'ami-083654bd07b5da81d'
+      KeyName: 'test_aws_scraper'
+      UserData:
+        !Base64 |
+        #!/bin/bash
+        sudo apt update
+        sudo apt install python3-pip -y
+        cd /home/ubuntu
+        git clone https://github.com/tryptofanik/us-politicians-tweets.git
+        cd us-politicians-tweets
+        pip install -r requirements.txt
+        python3 stream/twitter_stream.py
+

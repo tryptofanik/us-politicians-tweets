@@ -1,0 +1,172 @@
+AWSTemplateFormatVersion: 2010-09-09
+# Resources
+Resources:
+#NiFi parameter
+  pNiFiPublicIp:
+    Type: 'AWS::SSM::Parameter'
+    Properties:
+      Name: NIFI_PUBLIC_IP
+      Type: String
+      Value: !GetAtt NiFi1Instance.PublicIp
+#NiFi EC2 instance
+  NiFiInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref NiFiRole1
+
+  TweetsDynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: Tweets
+      AttributeDefinitions:
+        - AttributeName: user
+          AttributeType: S
+        - AttributeName: extractionTime
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: user
+          KeyType: HASH
+        - AttributeName: extractionTime
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  NiFiRole1:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: NiFiRole1
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  NiFi1Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.small'
+      SecurityGroupIds:
+        - !Ref NiFiInstanceSecurityGroup
+      IamInstanceProfile: !Ref NiFiInstanceProfile
+      KeyName: 'nifi'
+      ImageId: 'ami-0747bdcabd34c712a'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+
+          sudo su
+
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+          apt-get update -y
+
+          apt install openjdk-8-jre-headless -y
+
+          echo -e "\nJAVA_HOME=\"/usr/lib/jvm/java-8-openjdk-amd64\"\n" >> /etc/environment
+
+          source /etc/environment
+
+          wget https://archive.apache.org/dist/nifi/1.13.2/nifi-1.13.2-bin.tar.gz
+
+          tar -xvf /nifi-1.13.2-bin.tar.gz
+
+          cd /nifi-1.13.2/
+
+          sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/' ./conf/nifi.properties
+
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
+
+          gzip flow.xml
+
+          mv flow.xml.gz ./conf/flow.xml.gz
+
+          mkdir ~/.aws
+
+          echo -e "[default]\n" > ~/.aws/credentials
+
+          apt install jq -y
+
+          curl http://169.254.169.254/latest/meta-data/iam/security-credentials/NiFiRole1 | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' >> ~/.aws/credentials
+
+          ./bin/nifi.sh start
+
+  NiFiInstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Group for NiFi instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          ToPort: '8080'
+          FromPort: '8080'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '22'
+          FromPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '7001'
+          FromPort: '7001'
+          CidrIp: 0.0.0.0/0
+  RunEC2Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: RunEC2Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ec2:RunInstances'
+            - 'ec2:AttachVolume'
+            - 'ec2:CreateVolume'
+            - 'ec2:CreateSecurityGroup'
+          Resource: '*'
+      Roles:
+        - !Ref NiFiRole1
+    
+  ReadDynamoDBPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: TweetsDynamoDBTable
+    Properties:
+      PolicyName: ReadTweetsPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'dynamodb:Scan'
+            - 'dynamodb:Describe*'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Query'
+            - 'dynamodb:List*'
+          Resource: !GetAtt 
+            - TweetsDynamoDBTable
+            - Arn
+      Roles:
+        - !Ref NiFiRole1
+    
+  WriteDynamoDBPolicy:
+    Type: 'AWS::IAM::Policy'
+    DependsOn: TweetsDynamoDBTable
+    Properties:
+      PolicyName: WriteTweetsPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'dynamodb:BatchWriteItem'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:UpdateTable'
+          Resource: !GetAtt 
+            - TweetsDynamoDBTable
+            - Arn
+      Roles:
+        - !Ref NiFiRole1
