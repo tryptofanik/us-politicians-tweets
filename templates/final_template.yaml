@@ -249,7 +249,20 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - 'sts:AssumeRole'
-      Path: /
+      Policies:
+      - PolicyName: "root"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: "Allow"
+            Action:
+            - "kinesis:GetRecords"
+            - "kinesis:GetShardIterator"
+            - "kinesis:DescribeStream"
+            Resource: !GetAtt RedditKinesisDataStream.Arn
+          - Effect: "Allow"
+            Action: "kinesis:ListStreams"
+            Resource: !Sub "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/*"
 
 
   RedditLambdaFunction:
