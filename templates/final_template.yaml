@@ -64,7 +64,7 @@ Resources:
 
           sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/' ./conf/nifi.properties
 
-          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/reddit_nifi/flow.xml
 
           gzip flow.xml
 
@@ -228,7 +228,6 @@ Resources:
             - 'kinesis:PutRecord'
             - 'kinesis:ListShards'
             - 'kinesis:ListStreams'
-            - 'kinesis:*' #temporary solution
           Resource: '*'
       Roles:
         - !Ref NiFiRole1
