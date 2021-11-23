@@ -387,6 +387,7 @@ Resources:
             - 'kinesis:PutRecord'
             - 'kinesis:PutRecords'
             - 'kinesis:DescribeStream'
+            - 'kinesis:*' #testing
           Resource: !GetAtt RedditKinesisDataStream.Arn
       Roles:
         - !Ref ReddditStreamerRole
@@ -500,9 +501,9 @@ Resources:
             - 'dynamodb:PutItem'
             - 'dynamodb:UpdateItem'
             - 'dynamodb:UpdateTable'
-          Resource: !GetAtt 
-            - TweetsDynamoDBTable
-            - Arn
+          Resource:
+            - !GetAtt TweetsDynamoDBTable.Arn
+            - !GetAtt RedditDynamoDBTable.Arn
       Roles:
         - !Ref ScrapperRole
         - !Ref TwitterStreamerRole
