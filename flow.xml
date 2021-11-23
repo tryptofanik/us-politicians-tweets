@@ -338,7 +338,7 @@
       </property>
       <property>
         <name>Region</name>
-        <value>us-west-2</value>
+        <value>us-east-1</value>
       </property>
       <property>
         <name>Access Key</name>
@@ -1446,7 +1446,7 @@
                     </entry>
                     <entry>
                         <key>Region</key>
-                        <value>us-west-2</value>
+                        <value>us-east-1</value>
                     </entry>
                     <entry>
                         <key>Secret Key</key>
