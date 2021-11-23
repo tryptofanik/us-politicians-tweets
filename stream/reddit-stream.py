@@ -1,30 +1,25 @@
 #!/usr/bin/python
-import praw
-import re
 import datetime
-import sys
-import boto3
-import json
-import time
 import logging
-import pandas as pd
-import random
-import decimal
+import re
+import time
+
+import boto3
+import praw
 import requests
 
-
-LOG_FILENAME = '/tmp/reddit-stream.log'
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+# LOG_FILENAME = '/tmp/reddit-stream.log'
+# logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 
 def remove_emoji(comment):
     emoji_pattern = re.compile("["
-       u"\U0001F600-\U0001F64F"  # emoticons
-       u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-       u"\U0001F680-\U0001F6FF"  # transport & map symbols
-       u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-       u"\U00002702-\U00002f7B0"
-       u"\U000024C2-\U0001F251"
-       "]+", flags=re.UNICODE)
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               u"\U00002702-\U00002f7B0"
+                               u"\U000024C2-\U0001F251"
+                               "]+", flags=re.UNICODE)
 
     cleaned_comment =  emoji_pattern.sub(r'', comment)
 
@@ -50,7 +45,7 @@ class StreamListener(praw.Reddit):
                 txt = submission.selftext if len(submission.selftext) > 0 else submission.url
 
                 cleaned_post = remove_emoji(str(txt))
-                post_date = str(datetime.datetime.utcfromtimestamp(submission.created_utc).strftime('%Y/%m/%d %H:%M:%S'))
+                post_date = int(datetime.datetime.utcfromtimestamp(submission.created_utc).timestamp())
 
                 commentjson = {'created' : post_date,
                                'post_id': submission.id,
