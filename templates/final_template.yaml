@@ -387,9 +387,10 @@ Resources:
             - 'kinesis:PutRecord'
             - 'kinesis:PutRecords'
             - 'kinesis:DescribeStream'
-          Resource: '*'
+          Resource: !GetAtt RedditKinesisDataStream.Arn
       Roles:
         - !Ref ReddditStreamerRole
+        - !Ref NiFiRole1
     
   InvokeScrapingPolicy:
     Type: 'AWS::IAM::Policy'

@@ -77,7 +77,7 @@
       <yieldPeriod>1 sec</yieldPeriod>
       <bulletinLevel>WARN</bulletinLevel>
       <lossTolerant>false</lossTolerant>
-      <scheduledState>STOPPED</scheduledState>
+      <scheduledState>RUNNING</scheduledState>
       <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
@@ -249,7 +249,7 @@
       <yieldPeriod>1 sec</yieldPeriod>
       <bulletinLevel>WARN</bulletinLevel>
       <lossTolerant>false</lossTolerant>
-      <scheduledState>STOPPED</scheduledState>
+      <scheduledState>RUNNING</scheduledState>
       <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
@@ -316,7 +316,7 @@
       <yieldPeriod>1 sec</yieldPeriod>
       <bulletinLevel>WARN</bulletinLevel>
       <lossTolerant>false</lossTolerant>
-      <scheduledState>STOPPED</scheduledState>
+      <scheduledState>RUNNING</scheduledState>
       <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
