@@ -34,10 +34,12 @@ class StreamListener(praw.Reddit):
         self.posts_stream = self.subreddit(subreddits)
 
     def send_data(self, data, nifi_instance_public_ip):
-        r = requests.post(f"http://{nifi_instance_public_ip}:7002/redditListener",
-                          json=data)
-        print(r.status_code)
-
+        try:
+            r = requests.post(f"http://{nifi_instance_public_ip}:7002/redditListener",
+                              json=data)
+            # print(r.status_code)
+        except requests.exceptions.ConnectionError:
+            time.sleep(10) # TODO improving this
     def run_stream(self, nifi_instance_public_ip):
         kinesis_client = boto3.client('kinesis', region_name='us-east-1')
         try:
