@@ -1,47 +1,29 @@
 #!/usr/bin/python
-import praw
-import re
 import datetime
-import sys
-import boto3
-import json
-import time
 import logging
-import pandas as pd
-import random
-import decimal
+import re
+import time
 
-LOG_FILENAME = '/tmp/reddit-stream.log'
-logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
+import boto3
+import praw
+import requests
+
+# LOG_FILENAME = '/tmp/reddit-stream.log'
+# logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG)
 
 def remove_emoji(comment):
     emoji_pattern = re.compile("["
-       u"\U0001F600-\U0001F64F"  # emoticons
-       u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-       u"\U0001F680-\U0001F6FF"  # transport & map symbols
-       u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-       u"\U00002702-\U00002f7B0"
-       u"\U000024C2-\U0001F251"
-       "]+", flags=re.UNICODE)
+                               u"\U0001F600-\U0001F64F"  # emoticons
+                               u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                               u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                               u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                               u"\U00002702-\U00002f7B0"
+                               u"\U000024C2-\U0001F251"
+                               "]+", flags=re.UNICODE)
 
     cleaned_comment =  emoji_pattern.sub(r'', comment)
 
     return cleaned_comment
-
-
-def process_or_store(comment, kinesis_client):
-    try:
-        response = kinesis_client.put_record(
-            StreamName='reddit-stream',
-            Data=json.dumps(comment, ensure_ascii=False).encode('utf8'),
-            PartitionKey=str(random.randrange(100))
-            )
-        logging.info(response)
-        print(response)
-    except Exception as e:
-        logging.exception("Problem pushing to Kinesis")
-        print("Problem pushing to Kinesis")
-        print(e)
 
 
 class StreamListener(praw.Reddit):
@@ -52,10 +34,12 @@ class StreamListener(praw.Reddit):
         self.posts_stream = self.subreddit(subreddits)
 
     def send_data(self, data, nifi_instance_public_ip):
-        r = requests.post(f"http://{nifi_instance_public_ip}:7001/twitterListener",
-                          json=data)
-        print(r.status_code)
-
+        try:
+            r = requests.post(f"http://{nifi_instance_public_ip}:7002/redditListener",
+                              json=data)
+            # print(r.status_code)
+        except requests.exceptions.ConnectionError:
+            time.sleep(10) # TODO improving this
     def run_stream(self, nifi_instance_public_ip):
         kinesis_client = boto3.client('kinesis', region_name='us-east-1')
         try:
@@ -63,7 +47,7 @@ class StreamListener(praw.Reddit):
                 txt = submission.selftext if len(submission.selftext) > 0 else submission.url
 
                 cleaned_post = remove_emoji(str(txt))
-                post_date = str(datetime.datetime.utcfromtimestamp(submission.created_utc).strftime('%Y/%m/%d %H:%M:%S'))
+                post_date = int(datetime.datetime.utcfromtimestamp(submission.created_utc).timestamp())
 
                 commentjson = {'created' : post_date,
                                'post_id': submission.id,
@@ -73,8 +57,7 @@ class StreamListener(praw.Reddit):
                                }
 
                 self.num_posts_collected = self.num_posts_collected + 1
-                process_or_store(commentjson, kinesis_client)
-                #self.send_data(data=data, nifi_instance_public_ip=nifi_instance_public_ip)
+                self.send_data(data=commentjson, nifi_instance_public_ip=nifi_instance_public_ip)
 
                 time.sleep(0.1)
         except Exception as e:

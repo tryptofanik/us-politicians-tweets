@@ -1,7 +1,502 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<template encoding-version="1.3">
-    <description></description>
+<?xml version="1.0" encoding="UTF-8"?><flowController encoding-version="1.4">
+  <maxTimerDrivenThreadCount>10</maxTimerDrivenThreadCount>
+  <maxEventDrivenThreadCount>1</maxEventDrivenThreadCount>
+  <registries/>
+  <parameterContexts/>
+  <rootGroup>
+    <id>15e85cfa-017d-1000-34e5-2c1ebd271224</id>
+    <name>NiFi Flow</name>
+    <position x="0.0" y="0.0"/>
+    <comment/>
+    <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
+    <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
+    <processor>
+      <id>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</id>
+      <name>EvaluateJsonPath</name>
+      <position x="875.3683483832122" y="558.4063913251497"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.standard.EvaluateJsonPath</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-standard-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Destination</name>
+        <value>flowfile-attribute</value>
+      </property>
+      <property>
+        <name>Return Type</name>
+        <value>auto-detect</value>
+      </property>
+      <property>
+        <name>Path Not Found Behavior</name>
+        <value>ignore</value>
+      </property>
+      <property>
+        <name>Null Value Representation</name>
+        <value>empty string</value>
+      </property>
+      <property>
+        <name>user</name>
+        <value>$.user</value>
+      </property>
+      <property>
+        <name>extractionTime</name>
+        <value>$.extractionTime</value>
+      </property>
+      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+      <autoTerminatedRelationship>unmatched</autoTerminatedRelationship>
+    </processor>
+    <processor>
+      <id>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</id>
+      <name>ListenHTTP</name>
+      <position x="1496.0546276800872" y="558.4063913251497"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.standard.ListenHTTP</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-standard-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Base Path</name>
+        <value>twitterListener</value>
+      </property>
+      <property>
+        <name>Listening Port</name>
+        <value>7001</value>
+      </property>
+      <property>
+        <name>health-check-port</name>
+      </property>
+      <property>
+        <name>Max Data to Receive per Second</name>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>client-authentication</name>
+        <value>AUTO</value>
+      </property>
+      <property>
+        <name>Authorized DN Pattern</name>
+        <value>.*</value>
+      </property>
+      <property>
+        <name>Max Unconfirmed Flowfile Time</name>
+        <value>60 secs</value>
+      </property>
+      <property>
+        <name>HTTP Headers to receive as Attributes (Regex)</name>
+      </property>
+      <property>
+        <name>Return Code</name>
+        <value>200</value>
+      </property>
+      <property>
+        <name>multipart-request-max-size</name>
+        <value>1 MB</value>
+      </property>
+      <property>
+        <name>multipart-read-buffer-size</name>
+        <value>512 KB</value>
+      </property>
+    </processor>
+    <processor>
+      <id>686c9945-ac4f-39a5-3697-ca7c7597dc0d</id>
+      <name>PutDynamoDB</name>
+      <position x="875.3683483832122" y="169.2348215009309"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.aws.dynamodb.PutDynamoDB</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-aws-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>3 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Table Name</name>
+        <value>Tweets</value>
+      </property>
+      <property>
+        <name>Hash Key Name</name>
+        <value>user</value>
+      </property>
+      <property>
+        <name>Range Key Name</name>
+        <value>extractionTime</value>
+      </property>
+      <property>
+        <name>Hash Key Value</name>
+        <value>${user}</value>
+      </property>
+      <property>
+        <name>Range Key Value</name>
+        <value>${extractionTime}</value>
+      </property>
+      <property>
+        <name>Hash Key Value Type</name>
+        <value>string</value>
+      </property>
+      <property>
+        <name>Range Key Value Type</name>
+        <value>number</value>
+      </property>
+      <property>
+        <name>Json Document attribute</name>
+        <value>data</value>
+      </property>
+      <property>
+        <name>Character set of document</name>
+        <value>UTF-8</value>
+      </property>
+      <property>
+        <name>Batch items for each request (between 1 and 50)</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>Region</name>
+        <value>us-east-1</value>
+      </property>
+      <property>
+        <name>Access Key</name>
+      </property>
+      <property>
+        <name>Secret Key</name>
+      </property>
+      <property>
+        <name>Credentials File</name>
+      </property>
+      <property>
+        <name>AWS Credentials Provider service</name>
+        <value>15ea194f-017d-1000-2a8f-e937786a45d4</value>
+      </property>
+      <property>
+        <name>Communications Timeout</name>
+        <value>30 secs</value>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>proxy-configuration-service</name>
+      </property>
+      <property>
+        <name>Proxy Host</name>
+      </property>
+      <property>
+        <name>Proxy Host Port</name>
+      </property>
+      <property>
+        <name>proxy-user-name</name>
+      </property>
+      <property>
+        <name>proxy-user-password</name>
+      </property>
+      <autoTerminatedRelationship>unprocessed</autoTerminatedRelationship>
+      <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+    </processor>
+    <processor>
+      <id>393042a9-d02c-3acf-11aa-bde12befc8a7</id>
+      <name>ListenHTTP</name>
+      <position x="1944.0" y="576.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.standard.ListenHTTP</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-standard-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Base Path</name>
+        <value>redditListener</value>
+      </property>
+      <property>
+        <name>Listening Port</name>
+        <value>7002</value>
+      </property>
+      <property>
+        <name>health-check-port</name>
+      </property>
+      <property>
+        <name>Max Data to Receive per Second</name>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>client-authentication</name>
+        <value>AUTO</value>
+      </property>
+      <property>
+        <name>Authorized DN Pattern</name>
+        <value>.*</value>
+      </property>
+      <property>
+        <name>Max Unconfirmed Flowfile Time</name>
+        <value>60 secs</value>
+      </property>
+      <property>
+        <name>HTTP Headers to receive as Attributes (Regex)</name>
+      </property>
+      <property>
+        <name>Return Code</name>
+        <value>200</value>
+      </property>
+      <property>
+        <name>multipart-request-max-size</name>
+        <value>1 MB</value>
+      </property>
+      <property>
+        <name>multipart-read-buffer-size</name>
+        <value>512 KB</value>
+      </property>
+    </processor>
+    <processor>
+      <id>9e113471-88c3-3cb6-39c5-3282573bad04</id>
+      <name>PutKinesisStream</name>
+      <position x="1944.0" y="32.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.aws.kinesis.stream.PutKinesisStream</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-aws-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>kinesis-stream-name</name>
+        <value>reddit-stream</value>
+      </property>
+      <property>
+        <name>amazon-kinesis-stream-partition-key</name>
+        <value>${kinesis.partition.key}</value>
+      </property>
+      <property>
+        <name>message-batch-size</name>
+        <value>250</value>
+      </property>
+      <property>
+        <name>max-message-buffer-size</name>
+        <value>1 MB</value>
+      </property>
+      <property>
+        <name>Region</name>
+        <value>us-east-1</value>
+      </property>
+      <property>
+        <name>Access Key</name>
+      </property>
+      <property>
+        <name>Secret Key</name>
+      </property>
+      <property>
+        <name>Credentials File</name>
+      </property>
+      <property>
+        <name>AWS Credentials Provider service</name>
+        <value>15ea194f-017d-1000-2a8f-e937786a45d4</value>
+      </property>
+      <property>
+        <name>Communications Timeout</name>
+        <value>30 secs</value>
+      </property>
+      <property>
+        <name>proxy-configuration-service</name>
+      </property>
+      <property>
+        <name>Proxy Host</name>
+      </property>
+      <property>
+        <name>Proxy Host Port</name>
+      </property>
+      <property>
+        <name>proxy-user-name</name>
+      </property>
+      <property>
+        <name>proxy-user-password</name>
+      </property>
+      <property>
+        <name>Endpoint Override URL</name>
+      </property>
+      <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+    </processor>
+    <connection>
+      <id>6662d013-0c86-3e6c-2888-9cc282695165</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>393042a9-d02c-3acf-11aa-bde12befc8a7</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>9e113471-88c3-3cb6-39c5-3282573bad04</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship>success</relationship>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <queuePrioritizerClass>org.apache.nifi.prioritizer.FirstInFirstOutPrioritizer</queuePrioritizerClass>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
+      <id>09b228d7-f1ed-377d-eb9c-d68917c7de86</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>686c9945-ac4f-39a5-3697-ca7c7597dc0d</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship>matched</relationship>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
+      <id>469f381b-8214-338b-2a59-e73ea7547078</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship>success</relationship>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <controllerService>
+      <id>15ea194f-017d-1000-2a8f-e937786a45d4</id>
+      <name>AWSCredentialsProviderControllerService</name>
+      <comment/>
+      <class>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderControllerService</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-aws-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <enabled>true</enabled>
+      <property>
+        <name>default-credentials</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>Access Key</name>
+      </property>
+      <property>
+        <name>Secret Key</name>
+      </property>
+      <property>
+        <name>Credentials File</name>
+      </property>
+      <property>
+        <name>profile-name</name>
+      </property>
+      <property>
+        <name>anonymous-credentials</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>Assume Role ARN</name>
+      </property>
+      <property>
+        <name>Assume Role Session Name</name>
+      </property>
+      <property>
+        <name>Session Time</name>
+        <value>3600</value>
+      </property>
+      <property>
+        <name>assume-role-external-id</name>
+      </property>
+      <property>
+        <name>assume-role-proxy-host</name>
+      </property>
+      <property>
+        <name>assume-role-proxy-port</name>
+      </property>
+      <property>
+        <name>assume-role-sts-endpoint</name>
+      </property>
+    </controllerService>
+    <template encoding-version="1.3">
+    <description/>
     <groupId>15e85cfa-017d-1000-34e5-2c1ebd271224</groupId>
+    <id>89a8d3c1-9d7e-4fcb-932b-7feaa11e72dd</id>
     <name>flow</name>
     <snippet>
         <connections>
@@ -17,10 +512,10 @@
             <flowFileExpiration>0 sec</flowFileExpiration>
             <labelIndex>1</labelIndex>
             <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalancePartitionAttribute/>
             <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
             <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-            <name></name>
+            <name/>
             <selectedRelationships>matched</selectedRelationships>
             <source>
                 <groupId>3cc02cd2-95fe-3033-0000-000000000000</groupId>
@@ -42,10 +537,10 @@
             <flowFileExpiration>0 sec</flowFileExpiration>
             <labelIndex>1</labelIndex>
             <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalancePartitionAttribute/>
             <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
             <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-            <name></name>
+            <name/>
             <selectedRelationships>success</selectedRelationships>
             <source>
                 <groupId>3cc02cd2-95fe-3033-0000-000000000000</groupId>
@@ -67,10 +562,10 @@
             <flowFileExpiration>0 sec</flowFileExpiration>
             <labelIndex>1</labelIndex>
             <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-            <loadBalancePartitionAttribute></loadBalancePartitionAttribute>
+            <loadBalancePartitionAttribute/>
             <loadBalanceStatus>LOAD_BALANCE_NOT_CONFIGURED</loadBalanceStatus>
             <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-            <name></name>
+            <name/>
             <prioritizers>org.apache.nifi.prioritizer.FirstInFirstOutPrioritizer</prioritizers>
             <selectedRelationships>success</selectedRelationships>
             <source>
@@ -88,12 +583,12 @@
                 <group>org.apache.nifi</group>
                 <version>1.13.2</version>
             </bundle>
-            <comments></comments>
+            <comments/>
             <descriptors>
                 <entry>
-                    <key>default-credentials</key>
+                    <key>profile-name</key>
                     <value>
-                        <name>default-credentials</name>
+                        <name>profile-name</name>
                     </value>
                 </entry>
                 <entry>
@@ -103,27 +598,27 @@
                     </value>
                 </entry>
                 <entry>
-                    <key>Secret Key</key>
+                    <key>assume-role-proxy-host</key>
                     <value>
-                        <name>Secret Key</name>
+                        <name>assume-role-proxy-host</name>
                     </value>
                 </entry>
                 <entry>
-                    <key>Credentials File</key>
+                    <key>default-credentials</key>
                     <value>
-                        <name>Credentials File</name>
+                        <name>default-credentials</name>
                     </value>
                 </entry>
                 <entry>
-                    <key>profile-name</key>
+                    <key>Session Time</key>
                     <value>
-                        <name>profile-name</name>
+                        <name>Session Time</name>
                     </value>
                 </entry>
                 <entry>
-                    <key>anonymous-credentials</key>
+                    <key>assume-role-proxy-port</key>
                     <value>
-                        <name>anonymous-credentials</name>
+                        <name>assume-role-proxy-port</name>
                     </value>
                 </entry>
                 <entry>
@@ -139,9 +634,21 @@
                     </value>
                 </entry>
                 <entry>
-                    <key>Session Time</key>
+                    <key>assume-role-sts-endpoint</key>
                     <value>
-                        <name>Session Time</name>
+                        <name>assume-role-sts-endpoint</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Secret Key</key>
+                    <value>
+                        <name>Secret Key</name>
+                    </value>
+                </entry>
+                <entry>
+                    <key>Credentials File</key>
+                    <value>
+                        <name>Credentials File</name>
                     </value>
                 </entry>
                 <entry>
@@ -151,21 +658,9 @@
                     </value>
                 </entry>
                 <entry>
-                    <key>assume-role-proxy-host</key>
+                    <key>anonymous-credentials</key>
                     <value>
-                        <name>assume-role-proxy-host</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>assume-role-proxy-port</key>
-                    <value>
-                        <name>assume-role-proxy-port</name>
-                    </value>
-                </entry>
-                <entry>
-                    <key>assume-role-sts-endpoint</key>
-                    <value>
-                        <name>assume-role-sts-endpoint</name>
+                        <name>anonymous-credentials</name>
                     </value>
                 </entry>
             </descriptors>
@@ -173,24 +668,24 @@
             <persistsState>false</persistsState>
             <properties>
                 <entry>
-                    <key>default-credentials</key>
-                    <value>true</value>
+                    <key>profile-name</key>
                 </entry>
                 <entry>
                     <key>Access Key</key>
                 </entry>
                 <entry>
-                    <key>Secret Key</key>
+                    <key>assume-role-proxy-host</key>
                 </entry>
                 <entry>
-                    <key>Credentials File</key>
+                    <key>default-credentials</key>
+                    <value>true</value>
                 </entry>
                 <entry>
-                    <key>profile-name</key>
+                    <key>Session Time</key>
+                    <value>3600</value>
                 </entry>
                 <entry>
-                    <key>anonymous-credentials</key>
-                    <value>false</value>
+                    <key>assume-role-proxy-port</key>
                 </entry>
                 <entry>
                     <key>Assume Role ARN</key>
@@ -199,20 +694,20 @@
                     <key>Assume Role Session Name</key>
                 </entry>
                 <entry>
-                    <key>Session Time</key>
-                    <value>3600</value>
+                    <key>assume-role-sts-endpoint</key>
+                </entry>
+                <entry>
+                    <key>Secret Key</key>
+                </entry>
+                <entry>
+                    <key>Credentials File</key>
                 </entry>
                 <entry>
                     <key>assume-role-external-id</key>
                 </entry>
                 <entry>
-                    <key>assume-role-proxy-host</key>
-                </entry>
-                <entry>
-                    <key>assume-role-proxy-port</key>
-                </entry>
-                <entry>
-                    <key>assume-role-sts-endpoint</key>
+                    <key>anonymous-credentials</key>
+                    <value>false</value>
                 </entry>
             </properties>
             <state>ENABLED</state>
@@ -232,7 +727,7 @@
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
+                <comments/>
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
@@ -242,21 +737,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Listening Port</key>
+                        <key>multipart-read-buffer-size</key>
                         <value>
-                            <name>Listening Port</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>health-check-port</key>
-                        <value>
-                            <name>health-check-port</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Max Data to Receive per Second</key>
-                        <value>
-                            <name>Max Data to Receive per Second</name>
+                            <name>multipart-read-buffer-size</name>
                         </value>
                     </entry>
                     <entry>
@@ -264,6 +747,24 @@
                         <value>
                             <identifiesControllerService>org.apache.nifi.ssl.RestrictedSSLContextService</identifiesControllerService>
                             <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>multipart-request-max-size</key>
+                        <value>
+                            <name>multipart-request-max-size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Max Unconfirmed Flowfile Time</key>
+                        <value>
+                            <name>Max Unconfirmed Flowfile Time</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Max Data to Receive per Second</key>
+                        <value>
+                            <name>Max Data to Receive per Second</name>
                         </value>
                     </entry>
                     <entry>
@@ -276,15 +777,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Authorized DN Pattern</key>
+                        <key>Return Code</key>
                         <value>
-                            <name>Authorized DN Pattern</name>
+                            <name>Return Code</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Max Unconfirmed Flowfile Time</key>
+                        <key>Listening Port</key>
                         <value>
-                            <name>Max Unconfirmed Flowfile Time</name>
+                            <name>Listening Port</name>
                         </value>
                     </entry>
                     <entry>
@@ -294,21 +795,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Return Code</key>
+                        <key>health-check-port</key>
                         <value>
-                            <name>Return Code</name>
+                            <name>health-check-port</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>multipart-request-max-size</key>
+                        <key>Authorized DN Pattern</key>
                         <value>
-                            <name>multipart-request-max-size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>multipart-read-buffer-size</key>
-                        <value>
-                            <name>multipart-read-buffer-size</name>
+                            <name>Authorized DN Pattern</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -321,44 +816,44 @@
                         <value>redditListener</value>
                     </entry>
                     <entry>
-                        <key>Listening Port</key>
-                        <value>7002</value>
-                    </entry>
-                    <entry>
-                        <key>health-check-port</key>
-                    </entry>
-                    <entry>
-                        <key>Max Data to Receive per Second</key>
+                        <key>multipart-read-buffer-size</key>
+                        <value>512 KB</value>
                     </entry>
                     <entry>
                         <key>SSL Context Service</key>
-                    </entry>
-                    <entry>
-                        <key>client-authentication</key>
-                        <value>AUTO</value>
-                    </entry>
-                    <entry>
-                        <key>Authorized DN Pattern</key>
-                        <value>.*</value>
-                    </entry>
-                    <entry>
-                        <key>Max Unconfirmed Flowfile Time</key>
-                        <value>60 secs</value>
-                    </entry>
-                    <entry>
-                        <key>HTTP Headers to receive as Attributes (Regex)</key>
-                    </entry>
-                    <entry>
-                        <key>Return Code</key>
-                        <value>200</value>
                     </entry>
                     <entry>
                         <key>multipart-request-max-size</key>
                         <value>1 MB</value>
                     </entry>
                     <entry>
-                        <key>multipart-read-buffer-size</key>
-                        <value>512 KB</value>
+                        <key>Max Unconfirmed Flowfile Time</key>
+                        <value>60 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Max Data to Receive per Second</key>
+                    </entry>
+                    <entry>
+                        <key>client-authentication</key>
+                        <value>AUTO</value>
+                    </entry>
+                    <entry>
+                        <key>Return Code</key>
+                        <value>200</value>
+                    </entry>
+                    <entry>
+                        <key>Listening Port</key>
+                        <value>7002</value>
+                    </entry>
+                    <entry>
+                        <key>HTTP Headers to receive as Attributes (Regex)</key>
+                    </entry>
+                    <entry>
+                        <key>health-check-port</key>
+                    </entry>
+                    <entry>
+                        <key>Authorized DN Pattern</key>
+                        <value>.*</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -390,7 +885,7 @@
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
+                <comments/>
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
@@ -400,21 +895,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Listening Port</key>
+                        <key>multipart-read-buffer-size</key>
                         <value>
-                            <name>Listening Port</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>health-check-port</key>
-                        <value>
-                            <name>health-check-port</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Max Data to Receive per Second</key>
-                        <value>
-                            <name>Max Data to Receive per Second</name>
+                            <name>multipart-read-buffer-size</name>
                         </value>
                     </entry>
                     <entry>
@@ -422,6 +905,24 @@
                         <value>
                             <identifiesControllerService>org.apache.nifi.ssl.RestrictedSSLContextService</identifiesControllerService>
                             <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>multipart-request-max-size</key>
+                        <value>
+                            <name>multipart-request-max-size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Max Unconfirmed Flowfile Time</key>
+                        <value>
+                            <name>Max Unconfirmed Flowfile Time</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Max Data to Receive per Second</key>
+                        <value>
+                            <name>Max Data to Receive per Second</name>
                         </value>
                     </entry>
                     <entry>
@@ -434,15 +935,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Authorized DN Pattern</key>
+                        <key>Return Code</key>
                         <value>
-                            <name>Authorized DN Pattern</name>
+                            <name>Return Code</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Max Unconfirmed Flowfile Time</key>
+                        <key>Listening Port</key>
                         <value>
-                            <name>Max Unconfirmed Flowfile Time</name>
+                            <name>Listening Port</name>
                         </value>
                     </entry>
                     <entry>
@@ -452,21 +953,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Return Code</key>
+                        <key>health-check-port</key>
                         <value>
-                            <name>Return Code</name>
+                            <name>health-check-port</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>multipart-request-max-size</key>
+                        <key>Authorized DN Pattern</key>
                         <value>
-                            <name>multipart-request-max-size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>multipart-read-buffer-size</key>
-                        <value>
-                            <name>multipart-read-buffer-size</name>
+                            <name>Authorized DN Pattern</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -479,44 +974,44 @@
                         <value>twitterListener</value>
                     </entry>
                     <entry>
-                        <key>Listening Port</key>
-                        <value>7001</value>
-                    </entry>
-                    <entry>
-                        <key>health-check-port</key>
-                    </entry>
-                    <entry>
-                        <key>Max Data to Receive per Second</key>
+                        <key>multipart-read-buffer-size</key>
+                        <value>512 KB</value>
                     </entry>
                     <entry>
                         <key>SSL Context Service</key>
-                    </entry>
-                    <entry>
-                        <key>client-authentication</key>
-                        <value>AUTO</value>
-                    </entry>
-                    <entry>
-                        <key>Authorized DN Pattern</key>
-                        <value>.*</value>
-                    </entry>
-                    <entry>
-                        <key>Max Unconfirmed Flowfile Time</key>
-                        <value>60 secs</value>
-                    </entry>
-                    <entry>
-                        <key>HTTP Headers to receive as Attributes (Regex)</key>
-                    </entry>
-                    <entry>
-                        <key>Return Code</key>
-                        <value>200</value>
                     </entry>
                     <entry>
                         <key>multipart-request-max-size</key>
                         <value>1 MB</value>
                     </entry>
                     <entry>
-                        <key>multipart-read-buffer-size</key>
-                        <value>512 KB</value>
+                        <key>Max Unconfirmed Flowfile Time</key>
+                        <value>60 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Max Data to Receive per Second</key>
+                    </entry>
+                    <entry>
+                        <key>client-authentication</key>
+                        <value>AUTO</value>
+                    </entry>
+                    <entry>
+                        <key>Return Code</key>
+                        <value>200</value>
+                    </entry>
+                    <entry>
+                        <key>Listening Port</key>
+                        <value>7001</value>
+                    </entry>
+                    <entry>
+                        <key>HTTP Headers to receive as Attributes (Regex)</key>
+                    </entry>
+                    <entry>
+                        <key>health-check-port</key>
+                    </entry>
+                    <entry>
+                        <key>Authorized DN Pattern</key>
+                        <value>.*</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -548,37 +1043,19 @@
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
+                <comments/>
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
+                    <entry>
+                        <key>Proxy Host</key>
+                        <value>
+                            <name>Proxy Host</name>
+                        </value>
+                    </entry>
                     <entry>
                         <key>Table Name</key>
                         <value>
                             <name>Table Name</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Hash Key Name</key>
-                        <value>
-                            <name>Hash Key Name</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Range Key Name</key>
-                        <value>
-                            <name>Range Key Name</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Hash Key Value</key>
-                        <value>
-                            <name>Hash Key Value</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Range Key Value</key>
-                        <value>
-                            <name>Range Key Value</name>
                         </value>
                     </entry>
                     <entry>
@@ -588,15 +1065,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Range Key Value Type</key>
+                        <key>Access Key</key>
                         <value>
-                            <name>Range Key Value Type</name>
+                            <name>Access Key</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Json Document attribute</key>
+                        <key>Hash Key Name</key>
                         <value>
-                            <name>Json Document attribute</name>
+                            <name>Hash Key Name</name>
                         </value>
                     </entry>
                     <entry>
@@ -606,21 +1083,60 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>proxy-configuration-service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
+                            <name>proxy-configuration-service</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Batch items for each request (between 1 and 50)</key>
                         <value>
                             <name>Batch items for each request (between 1 and 50)</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Region</key>
+                        <key>Range Key Name</key>
                         <value>
-                            <name>Region</name>
+                            <name>Range Key Name</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Access Key</key>
+                        <key>AWS Credentials Provider service</key>
                         <value>
-                            <name>Access Key</name>
+                            <identifiesControllerService>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderService</identifiesControllerService>
+                            <name>AWS Credentials Provider service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
+                            <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Range Key Value</key>
+                        <value>
+                            <name>Range Key Value</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>proxy-user-password</key>
+                        <value>
+                            <name>proxy-user-password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Communications Timeout</key>
+                        <value>
+                            <name>Communications Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Region</key>
+                        <value>
+                            <name>Region</name>
                         </value>
                     </entry>
                     <entry>
@@ -636,42 +1152,21 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>AWS Credentials Provider service</key>
+                        <key>Hash Key Value</key>
                         <value>
-                            <identifiesControllerService>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderService</identifiesControllerService>
-                            <name>AWS Credentials Provider service</name>
+                            <name>Hash Key Value</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Communications Timeout</key>
+                        <key>Json Document attribute</key>
                         <value>
-                            <name>Communications Timeout</name>
+                            <name>Json Document attribute</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>SSL Context Service</key>
+                        <key>Range Key Value Type</key>
                         <value>
-                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
-                            <name>SSL Context Service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                        <value>
-                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
-                            <name>proxy-configuration-service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                        <value>
-                            <name>Proxy Host</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host Port</key>
-                        <value>
-                            <name>Proxy Host Port</name>
+                            <name>Range Key Value Type</name>
                         </value>
                     </entry>
                     <entry>
@@ -681,9 +1176,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>proxy-user-password</key>
+                        <key>Proxy Host Port</key>
                         <value>
-                            <name>proxy-user-password</name>
+                            <name>Proxy Host Port</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -692,51 +1187,59 @@
                 <penaltyDuration>3 sec</penaltyDuration>
                 <properties>
                     <entry>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
                         <key>Table Name</key>
                         <value>Tweets</value>
-                    </entry>
-                    <entry>
-                        <key>Hash Key Name</key>
-                        <value>user</value>
-                    </entry>
-                    <entry>
-                        <key>Range Key Name</key>
-                        <value>extractionTime</value>
-                    </entry>
-                    <entry>
-                        <key>Hash Key Value</key>
-                        <value>${user}</value>
-                    </entry>
-                    <entry>
-                        <key>Range Key Value</key>
-                        <value>${extractionTime}</value>
                     </entry>
                     <entry>
                         <key>Hash Key Value Type</key>
                         <value>string</value>
                     </entry>
                     <entry>
-                        <key>Range Key Value Type</key>
-                        <value>number</value>
+                        <key>Access Key</key>
                     </entry>
                     <entry>
-                        <key>Json Document attribute</key>
-                        <value>data</value>
+                        <key>Hash Key Name</key>
+                        <value>user</value>
                     </entry>
                     <entry>
                         <key>Character set of document</key>
                         <value>UTF-8</value>
                     </entry>
                     <entry>
+                        <key>proxy-configuration-service</key>
+                    </entry>
+                    <entry>
                         <key>Batch items for each request (between 1 and 50)</key>
                         <value>1</value>
                     </entry>
                     <entry>
-                        <key>Region</key>
-                        <value>us-east-1</value>
+                        <key>Range Key Name</key>
+                        <value>extractionTime</value>
                     </entry>
                     <entry>
-                        <key>Access Key</key>
+                        <key>AWS Credentials Provider service</key>
+                        <value>7609de86-f210-30af-0000-000000000000</value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                    </entry>
+                    <entry>
+                        <key>Range Key Value</key>
+                        <value>${extractionTime}</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-user-password</key>
+                    </entry>
+                    <entry>
+                        <key>Communications Timeout</key>
+                        <value>30 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Region</key>
+                        <value>us-east-1</value>
                     </entry>
                     <entry>
                         <key>Secret Key</key>
@@ -745,30 +1248,22 @@
                         <key>Credentials File</key>
                     </entry>
                     <entry>
-                        <key>AWS Credentials Provider service</key>
-                        <value>7609de86-f210-30af-0000-000000000000</value>
+                        <key>Hash Key Value</key>
+                        <value>${user}</value>
                     </entry>
                     <entry>
-                        <key>Communications Timeout</key>
-                        <value>30 secs</value>
+                        <key>Json Document attribute</key>
+                        <value>data</value>
                     </entry>
                     <entry>
-                        <key>SSL Context Service</key>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host Port</key>
+                        <key>Range Key Value Type</key>
+                        <value>number</value>
                     </entry>
                     <entry>
                         <key>proxy-user-name</key>
                     </entry>
                     <entry>
-                        <key>proxy-user-password</key>
+                        <key>Proxy Host Port</key>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -808,9 +1303,15 @@
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
+                <comments/>
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
+                    <entry>
+                        <key>Proxy Host</key>
+                        <value>
+                            <name>Proxy Host</name>
+                        </value>
+                    </entry>
                     <entry>
                         <key>kinesis-stream-name</key>
                         <value>
@@ -818,15 +1319,22 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>amazon-kinesis-stream-partition-key</key>
+                        <key>Access Key</key>
                         <value>
-                            <name>amazon-kinesis-stream-partition-key</name>
+                            <name>Access Key</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>message-batch-size</key>
+                        <key>proxy-configuration-service</key>
                         <value>
-                            <name>message-batch-size</name>
+                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
+                            <name>proxy-configuration-service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Endpoint Override URL</key>
+                        <value>
+                            <name>Endpoint Override URL</name>
                         </value>
                     </entry>
                     <entry>
@@ -836,15 +1344,34 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Region</key>
+                        <key>AWS Credentials Provider service</key>
                         <value>
-                            <name>Region</name>
+                            <identifiesControllerService>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderService</identifiesControllerService>
+                            <name>AWS Credentials Provider service</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Access Key</key>
+                        <key>message-batch-size</key>
                         <value>
-                            <name>Access Key</name>
+                            <name>message-batch-size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>proxy-user-password</key>
+                        <value>
+                            <name>proxy-user-password</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Communications Timeout</key>
+                        <value>
+                            <name>Communications Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Region</key>
+                        <value>
+                            <name>Region</name>
                         </value>
                     </entry>
                     <entry>
@@ -860,35 +1387,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>AWS Credentials Provider service</key>
+                        <key>amazon-kinesis-stream-partition-key</key>
                         <value>
-                            <identifiesControllerService>org.apache.nifi.processors.aws.credentials.provider.service.AWSCredentialsProviderService</identifiesControllerService>
-                            <name>AWS Credentials Provider service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Communications Timeout</key>
-                        <value>
-                            <name>Communications Timeout</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                        <value>
-                            <identifiesControllerService>org.apache.nifi.proxy.ProxyConfigurationService</identifiesControllerService>
-                            <name>proxy-configuration-service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                        <value>
-                            <name>Proxy Host</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host Port</key>
-                        <value>
-                            <name>Proxy Host Port</name>
+                            <name>amazon-kinesis-stream-partition-key</name>
                         </value>
                     </entry>
                     <entry>
@@ -898,15 +1399,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>proxy-user-password</key>
+                        <key>Proxy Host Port</key>
                         <value>
-                            <name>proxy-user-password</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Endpoint Override URL</key>
-                        <value>
-                            <name>Endpoint Override URL</name>
+                            <name>Proxy Host Port</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -915,27 +1410,43 @@
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
                         <key>kinesis-stream-name</key>
                         <value>reddit-stream</value>
                     </entry>
                     <entry>
-                        <key>amazon-kinesis-stream-partition-key</key>
-                        <value>${kinesis.partition.key}</value>
+                        <key>Access Key</key>
                     </entry>
                     <entry>
-                        <key>message-batch-size</key>
-                        <value>250</value>
+                        <key>proxy-configuration-service</key>
+                    </entry>
+                    <entry>
+                        <key>Endpoint Override URL</key>
                     </entry>
                     <entry>
                         <key>max-message-buffer-size</key>
                         <value>1 MB</value>
                     </entry>
                     <entry>
-                        <key>Region</key>
-                        <value>us-west-2</value>
+                        <key>AWS Credentials Provider service</key>
+                        <value>7609de86-f210-30af-0000-000000000000</value>
                     </entry>
                     <entry>
-                        <key>Access Key</key>
+                        <key>message-batch-size</key>
+                        <value>250</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-user-password</key>
+                    </entry>
+                    <entry>
+                        <key>Communications Timeout</key>
+                        <value>30 secs</value>
+                    </entry>
+                    <entry>
+                        <key>Region</key>
+                        <value>us-east-1</value>
                     </entry>
                     <entry>
                         <key>Secret Key</key>
@@ -944,30 +1455,14 @@
                         <key>Credentials File</key>
                     </entry>
                     <entry>
-                        <key>AWS Credentials Provider service</key>
-                        <value>7609de86-f210-30af-0000-000000000000</value>
-                    </entry>
-                    <entry>
-                        <key>Communications Timeout</key>
-                        <value>30 secs</value>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host Port</key>
+                        <key>amazon-kinesis-stream-partition-key</key>
+                        <value>${kinesis.partition.key}</value>
                     </entry>
                     <entry>
                         <key>proxy-user-name</key>
                     </entry>
                     <entry>
-                        <key>proxy-user-password</key>
-                    </entry>
-                    <entry>
-                        <key>Endpoint Override URL</key>
+                        <key>Proxy Host Port</key>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -1003,7 +1498,7 @@
             </bundle>
             <config>
                 <bulletinLevel>WARN</bulletinLevel>
-                <comments></comments>
+                <comments/>
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
@@ -1019,9 +1514,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Path Not Found Behavior</key>
+                        <key>extractionTime</key>
                         <value>
-                            <name>Path Not Found Behavior</name>
+                            <name>extractionTime</name>
                         </value>
                     </entry>
                     <entry>
@@ -1031,15 +1526,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>extractionTime</key>
-                        <value>
-                            <name>extractionTime</name>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>user</key>
                         <value>
                             <name>user</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Path Not Found Behavior</key>
+                        <value>
+                            <name>Path Not Found Behavior</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -1056,20 +1551,20 @@
                         <value>auto-detect</value>
                     </entry>
                     <entry>
-                        <key>Path Not Found Behavior</key>
-                        <value>ignore</value>
+                        <key>extractionTime</key>
+                        <value>$.extractionTime</value>
                     </entry>
                     <entry>
                         <key>Null Value Representation</key>
                         <value>empty string</value>
                     </entry>
                     <entry>
-                        <key>extractionTime</key>
-                        <value>$.extractionTime</value>
-                    </entry>
-                    <entry>
                         <key>user</key>
                         <value>$.user</value>
+                    </entry>
+                    <entry>
+                        <key>Path Not Found Behavior</key>
+                        <value>ignore</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -1096,5 +1591,9 @@
             <type>org.apache.nifi.processors.standard.EvaluateJsonPath</type>
         </processors>
     </snippet>
-    <timestamp>11/22/2021 21:23:15 UTC</timestamp>
+    <timestamp>11/23/2021 18:58:50 UTC</timestamp>
 </template>
+  </rootGroup>
+  <controllerServices/>
+  <reportingTasks/>
+</flowController>

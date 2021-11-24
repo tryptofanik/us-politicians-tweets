@@ -1,59 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
-# Parameters
-Parameters:
-  pRedditUsernameInput:
-    Description: Reddit username
-    Type: String
-    Default: None
-  pRedditPasswordInput:
-    Description: Reddit password
-    Type: String
-    Default: None
-  pRedditClientIDInput:
-    Description: Reddit client id
-    Type: String
-    Default: None
-  pRedditAppSecretInput:
-    Description: Reddit application secret
-    Type: String
-    Default: None
-  pRedditUserAgentInput:
-    Description: Reddit user agent
-    Type: String
-    Default: None
 # Resources
 Resources:
-#Reddit Parameters
-  pRedditUsername:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_USER
-      Type: String
-      Value: !Ref pRedditUsernameInput
-  pRedditPassword:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_PASS
-      Type: String
-      Value: !Ref pRedditPasswordInput
-  pRedditClientID:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_CLIENT_ID
-      Type: String
-      Value: !Ref pRedditClientIDInput
-  pRedditAppSecret:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_SECRET
-      Type: String
-      Value: !Ref pRedditAppSecretInput
-  pRedditUserAgent:
-    Type: 'AWS::SSM::Parameter'
-    Properties:
-      Name: REDDIT_USER_AGENT
-      Type: String
-      Value: !Ref pRedditUserAgentInput
 #NiFi parameter
   pNiFiPublicIp:
     Type: 'AWS::SSM::Parameter'
@@ -150,7 +97,29 @@ Resources:
           ToPort: '7001'
           FromPort: '7001'
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '7002'
+          FromPort: '7002'
+          CidrIp: 0.0.0.0/0
+
+
 # Reddit kinesis data stream
+  RedditDynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: RedditPosts
+      AttributeDefinitions:
+        - AttributeName: subreddit
+          AttributeType: S
+        - AttributeName: created
+          AttributeType: 'N'
+      KeySchema:
+        - AttributeName: subreddit
+          KeyType: HASH
+        - AttributeName: created
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
   RedditKinesisDataStream:
     Type: 'AWS::Kinesis::Stream'
     Properties:
@@ -232,27 +201,13 @@ Resources:
 
         cd us-politicians-tweets
 
+        git checkout master
 
         chmod 777 stream/reddit-stream.py
 
 
         nohup python3 stream/reddit-stream.py &>>
         realtime-comment-stream-log.txt
-
-  LambdaRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: LambdaRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      Path: /
 
   GetFromKinesisPolicy:
     Type: 'AWS::IAM::Policy'
@@ -269,16 +224,50 @@ Resources:
             - 'kinesis:DescribeStream'
             - 'kinesis:GetShardIterator'
             - 'kinesis:GetRecords'
+            - 'kinesis:PutRecords'
+            - 'kinesis:PutRecord'
             - 'kinesis:ListShards'
             - 'kinesis:ListStreams'
-            - 'kinesis:*' #temporary solution
           Resource: '*'
       Roles:
+        - !Ref NiFiRole1
         - !Ref LambdaRole
-    
+
+
+  LambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: LambdaRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+      - PolicyName: "root"
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: "Allow"
+            Action:
+            - "kinesis:GetRecords"
+            - "kinesis:GetShardIterator"
+            - "kinesis:DescribeStream"
+            Resource: !GetAtt RedditKinesisDataStream.Arn
+          - Effect: "Allow"
+            Action: "kinesis:ListStreams"
+            Resource: !Sub "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/*"
+
 
   RedditLambdaFunction:
     Type: 'AWS::Lambda::Function'
+    DependsOn: 
+      - GetFromKinesisPolicy
+      - LambdaRole
     Properties:
       Code:
         S3Bucket: danonki-code
@@ -398,9 +387,11 @@ Resources:
             - 'kinesis:PutRecord'
             - 'kinesis:PutRecords'
             - 'kinesis:DescribeStream'
-          Resource: '*'
+            - 'kinesis:*' #testing
+          Resource: !GetAtt RedditKinesisDataStream.Arn
       Roles:
         - !Ref ReddditStreamerRole
+        - !Ref NiFiRole1
     
   InvokeScrapingPolicy:
     Type: 'AWS::IAM::Policy'
@@ -437,7 +428,8 @@ Resources:
         - !Ref GetCurrentUserDataRole
         - !Ref TwitterStreamerRole
         - !Ref ReddditStreamerRole
-    
+        - !Ref LambdaRole
+
   RunEC2Policy:
     Type: 'AWS::IAM::Policy'
     Properties:
@@ -493,6 +485,7 @@ Resources:
         - !Ref TweetsReaderRole
         - !Ref GetCurrentUserDataRole
         - !Ref NiFiRole1
+        - !Ref LambdaRole
     
   WriteDynamoDBPolicy:
     Type: 'AWS::IAM::Policy'
@@ -508,13 +501,14 @@ Resources:
             - 'dynamodb:PutItem'
             - 'dynamodb:UpdateItem'
             - 'dynamodb:UpdateTable'
-          Resource: !GetAtt 
-            - TweetsDynamoDBTable
-            - Arn
+          Resource:
+            - !GetAtt TweetsDynamoDBTable.Arn
+            - !GetAtt RedditDynamoDBTable.Arn
       Roles:
         - !Ref ScrapperRole
         - !Ref TwitterStreamerRole
         - !Ref NiFiRole1
+        - !Ref LambdaRole
     
   TwitterAPIExtractor:
     Type: 'AWS::Lambda::Function'
