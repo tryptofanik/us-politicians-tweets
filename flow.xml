@@ -11,58 +11,9 @@
     <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
     <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
     <processor>
-      <id>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</id>
-      <name>EvaluateJsonPath</name>
-      <position x="875.3683483832122" y="558.4063913251497"/>
-      <styles/>
-      <comment/>
-      <class>org.apache.nifi.processors.standard.EvaluateJsonPath</class>
-      <bundle>
-        <group>org.apache.nifi</group>
-        <artifact>nifi-standard-nar</artifact>
-        <version>1.13.2</version>
-      </bundle>
-      <maxConcurrentTasks>1</maxConcurrentTasks>
-      <schedulingPeriod>0 sec</schedulingPeriod>
-      <penalizationPeriod>30 sec</penalizationPeriod>
-      <yieldPeriod>1 sec</yieldPeriod>
-      <bulletinLevel>WARN</bulletinLevel>
-      <lossTolerant>false</lossTolerant>
-      <scheduledState>RUNNING</scheduledState>
-      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-      <executionNode>ALL</executionNode>
-      <runDurationNanos>0</runDurationNanos>
-      <property>
-        <name>Destination</name>
-        <value>flowfile-attribute</value>
-      </property>
-      <property>
-        <name>Return Type</name>
-        <value>auto-detect</value>
-      </property>
-      <property>
-        <name>Path Not Found Behavior</name>
-        <value>ignore</value>
-      </property>
-      <property>
-        <name>Null Value Representation</name>
-        <value>empty string</value>
-      </property>
-      <property>
-        <name>user</name>
-        <value>$.user</value>
-      </property>
-      <property>
-        <name>extractionTime</name>
-        <value>$.extractionTime</value>
-      </property>
-      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
-      <autoTerminatedRelationship>unmatched</autoTerminatedRelationship>
-    </processor>
-    <processor>
       <id>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</id>
       <name>ListenHTTP</name>
-      <position x="1496.0546276800872" y="558.4063913251497"/>
+      <position x="1904.0" y="424.0"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.standard.ListenHTTP</class>
@@ -127,12 +78,12 @@
       </property>
     </processor>
     <processor>
-      <id>686c9945-ac4f-39a5-3697-ca7c7597dc0d</id>
-      <name>PutDynamoDB</name>
-      <position x="875.3683483832122" y="169.2348215009309"/>
+      <id>5896cf88-017d-1000-c2a7-1deab582ef70</id>
+      <name>PutKinesisStream</name>
+      <position x="1904.0" y="80.0"/>
       <styles/>
       <comment/>
-      <class>org.apache.nifi.processors.aws.dynamodb.PutDynamoDB</class>
+      <class>org.apache.nifi.processors.aws.kinesis.stream.PutKinesisStream</class>
       <bundle>
         <group>org.apache.nifi</group>
         <artifact>nifi-aws-nar</artifact>
@@ -140,7 +91,7 @@
       </bundle>
       <maxConcurrentTasks>1</maxConcurrentTasks>
       <schedulingPeriod>0 sec</schedulingPeriod>
-      <penalizationPeriod>3 sec</penalizationPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
       <yieldPeriod>1 sec</yieldPeriod>
       <bulletinLevel>WARN</bulletinLevel>
       <lossTolerant>false</lossTolerant>
@@ -149,44 +100,20 @@
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
       <property>
-        <name>Table Name</name>
-        <value>Tweets</value>
+        <name>kinesis-stream-name</name>
+        <value>twitter-stream</value>
       </property>
       <property>
-        <name>Hash Key Name</name>
-        <value>user</value>
+        <name>amazon-kinesis-stream-partition-key</name>
+        <value>${kinesis.partition.key}</value>
       </property>
       <property>
-        <name>Range Key Name</name>
-        <value>extractionTime</value>
+        <name>message-batch-size</name>
+        <value>250</value>
       </property>
       <property>
-        <name>Hash Key Value</name>
-        <value>${user}</value>
-      </property>
-      <property>
-        <name>Range Key Value</name>
-        <value>${extractionTime}</value>
-      </property>
-      <property>
-        <name>Hash Key Value Type</name>
-        <value>string</value>
-      </property>
-      <property>
-        <name>Range Key Value Type</name>
-        <value>number</value>
-      </property>
-      <property>
-        <name>Json Document attribute</name>
-        <value>data</value>
-      </property>
-      <property>
-        <name>Character set of document</name>
-        <value>UTF-8</value>
-      </property>
-      <property>
-        <name>Batch items for each request (between 1 and 50)</name>
-        <value>1</value>
+        <name>max-message-buffer-size</name>
+        <value>1 MB</value>
       </property>
       <property>
         <name>Region</name>
@@ -210,9 +137,6 @@
         <value>30 secs</value>
       </property>
       <property>
-        <name>SSL Context Service</name>
-      </property>
-      <property>
         <name>proxy-configuration-service</name>
       </property>
       <property>
@@ -227,14 +151,16 @@
       <property>
         <name>proxy-user-password</name>
       </property>
-      <autoTerminatedRelationship>unprocessed</autoTerminatedRelationship>
+      <property>
+        <name>Endpoint Override URL</name>
+      </property>
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
       <autoTerminatedRelationship>failure</autoTerminatedRelationship>
     </processor>
     <processor>
       <id>393042a9-d02c-3acf-11aa-bde12befc8a7</id>
       <name>ListenHTTP</name>
-      <position x="1944.0" y="576.0"/>
+      <position x="1368.0" y="424.0"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.standard.ListenHTTP</class>
@@ -301,7 +227,7 @@
     <processor>
       <id>9e113471-88c3-3cb6-39c5-3282573bad04</id>
       <name>PutKinesisStream</name>
-      <position x="1944.0" y="32.0"/>
+      <position x="1368.0" y="80.0"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.aws.kinesis.stream.PutKinesisStream</class>
@@ -400,26 +326,6 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
-      <id>09b228d7-f1ed-377d-eb9c-d68917c7de86</id>
-      <name/>
-      <bendPoints/>
-      <labelIndex>1</labelIndex>
-      <zIndex>0</zIndex>
-      <sourceId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</sourceId>
-      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
-      <sourceType>PROCESSOR</sourceType>
-      <destinationId>686c9945-ac4f-39a5-3697-ca7c7597dc0d</destinationId>
-      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
-      <destinationType>PROCESSOR</destinationType>
-      <relationship>matched</relationship>
-      <maxWorkQueueSize>10000</maxWorkQueueSize>
-      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-      <flowFileExpiration>0 sec</flowFileExpiration>
-      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-      <partitioningAttribute/>
-      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-    </connection>
-    <connection>
       <id>469f381b-8214-338b-2a59-e73ea7547078</id>
       <name/>
       <bendPoints/>
@@ -428,7 +334,7 @@
       <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</destinationId>
+      <destinationId>5896cf88-017d-1000-c2a7-1deab582ef70</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
