@@ -28,16 +28,15 @@ def lambda_handler(event, context):
     )
 
     user = event["user"]
-    statuses = []
 
     try:
-        followers = api.get_follower_ids(screen_name='SenShelby')
-        friends = api.get_friend_ids(screen_name='SenShelby')
-        account_data = api.get_user(screen_name='SenShelby')
+        followers = api.get_follower_ids(screen_name=user)
+        friends = api.get_friend_ids(screen_name=user)
+        account_data = api.get_user(screen_name=user)
         data = {
             'followers': followers,
             'friends': friends,
-            'account_data': account_data
+            'account_data': account_data._json
         }
     except tweepy.TweepError:
         return {
