@@ -560,6 +560,7 @@ Resources:
     Properties:
       FunctionName: TwitterAPIExtractor
       Runtime: python3.8
+      Timeout: 60
       Handler: lambda_function.lambda_handler
       Role: !GetAtt 
         - ScrapperRole
@@ -567,6 +568,22 @@ Resources:
       Code:
         S3Bucket: danonki-code
         S3Key: twitter_api_extractor.zip
+
+  TwitterMetaExtractor:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - ScrapperRole
+    Properties:
+      FunctionName: TwitterMetaExtractor
+      Runtime: python3.8
+      Timeout: 10
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt 
+        - ScrapperRole
+        - Arn
+      Code:
+        S3Bucket: danonki-code
+        S3Key: twitter_meta_extractor.zip
     
   TwitterStreamerSG:
     Type: 'AWS::EC2::SecurityGroup'
