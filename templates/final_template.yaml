@@ -64,7 +64,7 @@ Resources:
 
           sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/' ./conf/nifi.properties
 
-          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/twitter-kinesis/flow.xml || wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
 
           gzip flow.xml
 
@@ -233,6 +233,26 @@ Resources:
         - !Ref NiFiRole1
         - !Ref LambdaRole
 
+  TwitterKinesisDataStream:
+    Type: 'AWS::Kinesis::Stream'
+    Properties:
+      Name: twitter-stream
+      ShardCount: 1
+
+  TwitterLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - GetFromKinesisPolicy
+      - LambdaRole
+    Properties:
+      Code:
+        S3Bucket: danonki-code
+        S3Key: twitter-kinesis-lambda.zip
+      Handler: twitter-kinesis-lambda.lambda_handler
+      MemorySize: 128
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 60
 
   LambdaRole:
     Type: 'AWS::IAM::Role'
@@ -257,7 +277,9 @@ Resources:
             - "kinesis:GetRecords"
             - "kinesis:GetShardIterator"
             - "kinesis:DescribeStream"
-            Resource: !GetAtt RedditKinesisDataStream.Arn
+            Resource:
+              - !GetAtt RedditKinesisDataStream.Arn
+              - !GetAtt TwitterKinesisDataStream.Arn
           - Effect: "Allow"
             Action: "kinesis:ListStreams"
             Resource: !Sub "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/*"
@@ -327,7 +349,28 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Path: /
-    
+
+  TwitterSourceMappingKinesisStream:
+    Type: 'AWS::Lambda::EventSourceMapping'
+    DependsOn:
+      - TwitterKinesisDataStream
+      - TwitterLambdaFunction
+    Properties:
+      BatchSize: 10
+      EventSourceArn:
+        'Fn::Join':
+          - ''
+          - - 'arn:aws:kinesis:'
+            - Ref: 'AWS::Region'
+            - ':'
+            - Ref: 'AWS::AccountId'
+            - ':stream/'
+            - Ref: TwitterKinesisDataStream
+      FunctionName:
+        'Fn::GetAtt':
+          - TwitterLambdaFunction
+          - Arn
+      StartingPosition: TRIM_HORIZON
 
   TwitterStreamerRole:
     Type: 'AWS::IAM::Role'
@@ -517,6 +560,7 @@ Resources:
     Properties:
       FunctionName: TwitterAPIExtractor
       Runtime: python3.8
+      Timeout: 60
       Handler: lambda_function.lambda_handler
       Role: !GetAtt 
         - ScrapperRole
@@ -524,6 +568,22 @@ Resources:
       Code:
         S3Bucket: danonki-code
         S3Key: twitter_api_extractor.zip
+
+  TwitterMetaExtractor:
+    Type: 'AWS::Lambda::Function'
+    DependsOn:
+      - ScrapperRole
+    Properties:
+      FunctionName: TwitterMetaExtractor
+      Runtime: python3.8
+      Timeout: 10
+      Handler: lambda_function.lambda_handler
+      Role: !GetAtt 
+        - ScrapperRole
+        - Arn
+      Code:
+        S3Bucket: danonki-code
+        S3Key: twitter_meta_extractor.zip
     
   TwitterStreamerSG:
     Type: 'AWS::EC2::SecurityGroup'

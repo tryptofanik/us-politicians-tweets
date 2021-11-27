@@ -11,58 +11,9 @@
     <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
     <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
     <processor>
-      <id>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</id>
-      <name>EvaluateJsonPath</name>
-      <position x="875.3683483832122" y="558.4063913251497"/>
-      <styles/>
-      <comment/>
-      <class>org.apache.nifi.processors.standard.EvaluateJsonPath</class>
-      <bundle>
-        <group>org.apache.nifi</group>
-        <artifact>nifi-standard-nar</artifact>
-        <version>1.13.2</version>
-      </bundle>
-      <maxConcurrentTasks>1</maxConcurrentTasks>
-      <schedulingPeriod>0 sec</schedulingPeriod>
-      <penalizationPeriod>30 sec</penalizationPeriod>
-      <yieldPeriod>1 sec</yieldPeriod>
-      <bulletinLevel>WARN</bulletinLevel>
-      <lossTolerant>false</lossTolerant>
-      <scheduledState>RUNNING</scheduledState>
-      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-      <executionNode>ALL</executionNode>
-      <runDurationNanos>0</runDurationNanos>
-      <property>
-        <name>Destination</name>
-        <value>flowfile-attribute</value>
-      </property>
-      <property>
-        <name>Return Type</name>
-        <value>auto-detect</value>
-      </property>
-      <property>
-        <name>Path Not Found Behavior</name>
-        <value>ignore</value>
-      </property>
-      <property>
-        <name>Null Value Representation</name>
-        <value>empty string</value>
-      </property>
-      <property>
-        <name>user</name>
-        <value>$.user</value>
-      </property>
-      <property>
-        <name>extractionTime</name>
-        <value>$.extractionTime</value>
-      </property>
-      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
-      <autoTerminatedRelationship>unmatched</autoTerminatedRelationship>
-    </processor>
-    <processor>
       <id>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</id>
-      <name>ListenHTTP</name>
-      <position x="1496.0546276800872" y="558.4063913251497"/>
+      <name>Listen-Twitter</name>
+      <position x="1904.0" y="424.0"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.standard.ListenHTTP</class>
@@ -127,12 +78,12 @@
       </property>
     </processor>
     <processor>
-      <id>686c9945-ac4f-39a5-3697-ca7c7597dc0d</id>
-      <name>PutDynamoDB</name>
-      <position x="875.3683483832122" y="169.2348215009309"/>
+      <id>5896cf88-017d-1000-c2a7-1deab582ef70</id>
+      <name>PutKinesis-Twitter</name>
+      <position x="1904.0" y="80.0"/>
       <styles/>
       <comment/>
-      <class>org.apache.nifi.processors.aws.dynamodb.PutDynamoDB</class>
+      <class>org.apache.nifi.processors.aws.kinesis.stream.PutKinesisStream</class>
       <bundle>
         <group>org.apache.nifi</group>
         <artifact>nifi-aws-nar</artifact>
@@ -140,7 +91,7 @@
       </bundle>
       <maxConcurrentTasks>1</maxConcurrentTasks>
       <schedulingPeriod>0 sec</schedulingPeriod>
-      <penalizationPeriod>3 sec</penalizationPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
       <yieldPeriod>1 sec</yieldPeriod>
       <bulletinLevel>WARN</bulletinLevel>
       <lossTolerant>false</lossTolerant>
@@ -149,44 +100,20 @@
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
       <property>
-        <name>Table Name</name>
-        <value>Tweets</value>
+        <name>kinesis-stream-name</name>
+        <value>twitter-stream</value>
       </property>
       <property>
-        <name>Hash Key Name</name>
-        <value>user</value>
+        <name>amazon-kinesis-stream-partition-key</name>
+        <value>${kinesis.partition.key}</value>
       </property>
       <property>
-        <name>Range Key Name</name>
-        <value>extractionTime</value>
+        <name>message-batch-size</name>
+        <value>250</value>
       </property>
       <property>
-        <name>Hash Key Value</name>
-        <value>${user}</value>
-      </property>
-      <property>
-        <name>Range Key Value</name>
-        <value>${extractionTime}</value>
-      </property>
-      <property>
-        <name>Hash Key Value Type</name>
-        <value>string</value>
-      </property>
-      <property>
-        <name>Range Key Value Type</name>
-        <value>number</value>
-      </property>
-      <property>
-        <name>Json Document attribute</name>
-        <value>data</value>
-      </property>
-      <property>
-        <name>Character set of document</name>
-        <value>UTF-8</value>
-      </property>
-      <property>
-        <name>Batch items for each request (between 1 and 50)</name>
-        <value>1</value>
+        <name>max-message-buffer-size</name>
+        <value>1 MB</value>
       </property>
       <property>
         <name>Region</name>
@@ -210,9 +137,6 @@
         <value>30 secs</value>
       </property>
       <property>
-        <name>SSL Context Service</name>
-      </property>
-      <property>
         <name>proxy-configuration-service</name>
       </property>
       <property>
@@ -227,14 +151,15 @@
       <property>
         <name>proxy-user-password</name>
       </property>
-      <autoTerminatedRelationship>unprocessed</autoTerminatedRelationship>
+      <property>
+        <name>Endpoint Override URL</name>
+      </property>
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
-      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
     </processor>
     <processor>
       <id>393042a9-d02c-3acf-11aa-bde12befc8a7</id>
-      <name>ListenHTTP</name>
-      <position x="1944.0" y="576.0"/>
+      <name>Listen-RedditStream</name>
+      <position x="1360.0" y="426.53125"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.standard.ListenHTTP</class>
@@ -300,8 +225,8 @@
     </processor>
     <processor>
       <id>9e113471-88c3-3cb6-39c5-3282573bad04</id>
-      <name>PutKinesisStream</name>
-      <position x="1944.0" y="32.0"/>
+      <name>PutKinesis-Reddit</name>
+      <position x="1360.0" y="80.0"/>
       <styles/>
       <comment/>
       <class>org.apache.nifi.processors.aws.kinesis.stream.PutKinesisStream</class>
@@ -376,8 +301,501 @@
         <name>Endpoint Override URL</name>
       </property>
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
-      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
     </processor>
+    <label>
+      <id>017d1000-2a78-1e22-da6a-8b74eb1b7516</id>
+      <position x="1816.0" y="-288.0"/>
+      <size height="872.0" width="752.0"/>
+      <styles>
+        <style name="font-size">22px</style>
+      </styles>
+      <value>Twitter pipeline</value>
+    </label>
+    <label>
+      <id>5e222a78-017d-1000-97aa-a9d82353bf94</id>
+      <position x="1008.0" y="-288.0"/>
+      <size height="872.0" width="752.0"/>
+      <styles>
+        <style name="font-size">22px</style>
+      </styles>
+      <value>Reddit pipeline</value>
+    </label>
+    <processGroup>
+      <id>017d1002-2a78-1e22-538f-416aa31dce92</id>
+      <name>Retry-Twitter-Kinesis</name>
+      <position x="1888.0" y="-256.0"/>
+      <comment/>
+      <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
+      <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
+      <processor>
+        <id>017d1006-2a78-1e22-b6f0-fb722c09d286</id>
+        <name>Set retry counter</name>
+        <position x="553.5000318801578" y="292.12000636602465"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.attributes.UpdateAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-update-attribute-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Delete Attributes Expression</name>
+        </property>
+        <property>
+          <name>Store State</name>
+          <value>Do not store state</value>
+        </property>
+        <property>
+          <name>Stateful Variables Initial Value</name>
+        </property>
+        <property>
+          <name>canonical-value-lookup-cache-size</name>
+          <value>100</value>
+        </property>
+        <property>
+          <name>retry.counter</name>
+          <value>${retry.counter:replaceNull('0'):plus(1)}</value>
+        </property>
+      </processor>
+      <processor>
+        <id>017d1007-2a78-1e22-8464-dfab35a7bcc6</id>
+        <name>Reset retry counter</name>
+        <position x="1168.0" y="536.0"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.attributes.UpdateAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-update-attribute-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Delete Attributes Expression</name>
+        </property>
+        <property>
+          <name>Store State</name>
+          <value>Do not store state</value>
+        </property>
+        <property>
+          <name>Stateful Variables Initial Value</name>
+        </property>
+        <property>
+          <name>canonical-value-lookup-cache-size</name>
+          <value>100</value>
+        </property>
+        <property>
+          <name>retry.counter</name>
+          <value>0</value>
+        </property>
+        <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      </processor>
+      <processor>
+        <id>017d1005-2a78-1e22-0510-b8b5d51e50a4</id>
+        <name>Check Retry Count</name>
+        <position x="555.0000776565249" y="527.9600063660247"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.standard.RouteOnAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-standard-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Routing Strategy</name>
+          <value>Route to Property name</value>
+        </property>
+        <property>
+          <name>Try again</name>
+          <value>${retry.counter:le('3')}</value>
+        </property>
+      </processor>
+      <inputPort>
+        <id>017d1003-2a78-1e22-3f7d-045ddfb19b46</id>
+        <name>data</name>
+        <position x="64.0" y="336.0"/>
+        <comments/>
+        <scheduledState>RUNNING</scheduledState>
+      </inputPort>
+      <outputPort>
+        <id>017d1004-2a78-1e22-e510-a29640e4ab84</id>
+        <name>retry</name>
+        <position x="64.0" y="560.0"/>
+        <comments>Items sent to this port have not yet exceeded the maximum retry count.</comments>
+        <scheduledState>RUNNING</scheduledState>
+      </outputPort>
+      <connection>
+        <id>017d1009-2a78-1e22-e36b-3a956357a2d1</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>017d1005-2a78-1e22-0510-b8b5d51e50a4</sourceId>
+        <sourceGroupId>017d1002-2a78-1e22-538f-416aa31dce92</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>017d1004-2a78-1e22-e510-a29640e4ab84</destinationId>
+        <destinationGroupId>017d1002-2a78-1e22-538f-416aa31dce92</destinationGroupId>
+        <destinationType>OUTPUT_PORT</destinationType>
+        <relationship>Try again</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>017d100a-2a78-1e22-74a0-a8ec2696b389</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>017d1006-2a78-1e22-b6f0-fb722c09d286</sourceId>
+        <sourceGroupId>017d1002-2a78-1e22-538f-416aa31dce92</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>017d1005-2a78-1e22-0510-b8b5d51e50a4</destinationId>
+        <destinationGroupId>017d1002-2a78-1e22-538f-416aa31dce92</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship>success</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>017d100b-2a78-1e22-eaee-0d0ab9262263</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>017d1005-2a78-1e22-0510-b8b5d51e50a4</sourceId>
+        <sourceGroupId>017d1002-2a78-1e22-538f-416aa31dce92</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>017d1007-2a78-1e22-8464-dfab35a7bcc6</destinationId>
+        <destinationGroupId>017d1002-2a78-1e22-538f-416aa31dce92</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship>unmatched</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>017d1008-2a78-1e22-dec6-864e513dfd3d</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>017d1003-2a78-1e22-3f7d-045ddfb19b46</sourceId>
+        <sourceGroupId>017d1002-2a78-1e22-538f-416aa31dce92</sourceGroupId>
+        <sourceType>INPUT_PORT</sourceType>
+        <destinationId>017d1006-2a78-1e22-b6f0-fb722c09d286</destinationId>
+        <destinationGroupId>017d1002-2a78-1e22-538f-416aa31dce92</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship/>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+    </processGroup>
+    <processGroup>
+      <id>d80fe614-b7e0-46bc-6cf9-ada564c87885</id>
+      <name>Retry-Reddit-Kinesis</name>
+      <position x="1344.0" y="-256.0"/>
+      <comment/>
+      <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
+      <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
+      <processor>
+        <id>10f53281-4064-4725-2263-6fbc3771efb2</id>
+        <name>Check Retry Count</name>
+        <position x="555.0000776565249" y="527.9600063660247"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.standard.RouteOnAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-standard-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Routing Strategy</name>
+          <value>Route to Property name</value>
+        </property>
+        <property>
+          <name>Try again</name>
+          <value>${retry.counter:le('3')}</value>
+        </property>
+      </processor>
+      <processor>
+        <id>8692729d-e3f2-472d-0338-565075a727bc</id>
+        <name>Set retry counter</name>
+        <position x="553.5000318801578" y="292.12000636602465"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.attributes.UpdateAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-update-attribute-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Delete Attributes Expression</name>
+        </property>
+        <property>
+          <name>Store State</name>
+          <value>Do not store state</value>
+        </property>
+        <property>
+          <name>Stateful Variables Initial Value</name>
+        </property>
+        <property>
+          <name>canonical-value-lookup-cache-size</name>
+          <value>100</value>
+        </property>
+        <property>
+          <name>retry.counter</name>
+          <value>${retry.counter:replaceNull('0'):plus(1)}</value>
+        </property>
+      </processor>
+      <processor>
+        <id>34b75d26-46b8-3d67-fae5-80b87c55def8</id>
+        <name>Reset retry counter</name>
+        <position x="1168.0" y="536.0"/>
+        <styles/>
+        <comment/>
+        <class>org.apache.nifi.processors.attributes.UpdateAttribute</class>
+        <bundle>
+          <group>org.apache.nifi</group>
+          <artifact>nifi-update-attribute-nar</artifact>
+          <version>1.13.2</version>
+        </bundle>
+        <maxConcurrentTasks>1</maxConcurrentTasks>
+        <schedulingPeriod>0 sec</schedulingPeriod>
+        <penalizationPeriod>30 sec</penalizationPeriod>
+        <yieldPeriod>1 sec</yieldPeriod>
+        <bulletinLevel>WARN</bulletinLevel>
+        <lossTolerant>false</lossTolerant>
+        <scheduledState>RUNNING</scheduledState>
+        <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+        <executionNode>ALL</executionNode>
+        <runDurationNanos>0</runDurationNanos>
+        <property>
+          <name>Delete Attributes Expression</name>
+        </property>
+        <property>
+          <name>Store State</name>
+          <value>Do not store state</value>
+        </property>
+        <property>
+          <name>Stateful Variables Initial Value</name>
+        </property>
+        <property>
+          <name>canonical-value-lookup-cache-size</name>
+          <value>100</value>
+        </property>
+        <property>
+          <name>retry.counter</name>
+          <value>0</value>
+        </property>
+        <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      </processor>
+      <inputPort>
+        <id>535627d4-d4fb-4963-7331-41b3f418e51c</id>
+        <name>data</name>
+        <position x="64.0" y="336.0"/>
+        <comments/>
+        <scheduledState>RUNNING</scheduledState>
+      </inputPort>
+      <outputPort>
+        <id>de67351f-6e63-4557-6115-d32b0bb45420</id>
+        <name>retry</name>
+        <position x="64.0" y="560.0"/>
+        <comments>Items sent to this port have not yet exceeded the maximum retry count.</comments>
+        <scheduledState>RUNNING</scheduledState>
+      </outputPort>
+      <connection>
+        <id>fb4298e6-37b3-47ae-b710-70005efedc44</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>535627d4-d4fb-4963-7331-41b3f418e51c</sourceId>
+        <sourceGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</sourceGroupId>
+        <sourceType>INPUT_PORT</sourceType>
+        <destinationId>8692729d-e3f2-472d-0338-565075a727bc</destinationId>
+        <destinationGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship/>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>155cdc9a-b9ff-4f6d-57ef-0b3dfa5fcab1</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>10f53281-4064-4725-2263-6fbc3771efb2</sourceId>
+        <sourceGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>de67351f-6e63-4557-6115-d32b0bb45420</destinationId>
+        <destinationGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</destinationGroupId>
+        <destinationType>OUTPUT_PORT</destinationType>
+        <relationship>Try again</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>d3170ec7-c212-466f-e7ff-4cd4a039ffaf</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>8692729d-e3f2-472d-0338-565075a727bc</sourceId>
+        <sourceGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>10f53281-4064-4725-2263-6fbc3771efb2</destinationId>
+        <destinationGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship>success</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>ec2fe73b-c7c0-489c-e567-97a554226b66</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>10f53281-4064-4725-2263-6fbc3771efb2</sourceId>
+        <sourceGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>34b75d26-46b8-3d67-fae5-80b87c55def8</destinationId>
+        <destinationGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship>unmatched</relationship>
+        <maxWorkQueueSize>10</maxWorkQueueSize>
+        <maxWorkQueueDataSize>0 MB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+    </processGroup>
+    <connection>
+      <id>017d100e-2a78-1e22-62ae-ac99c4c15bc0</id>
+      <name/>
+      <bendPoints>
+        <bendPoint x="2424.0" y="0.0"/>
+      </bendPoints>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>017d1004-2a78-1e22-e510-a29640e4ab84</sourceId>
+      <sourceGroupId>017d1002-2a78-1e22-538f-416aa31dce92</sourceGroupId>
+      <sourceType>OUTPUT_PORT</sourceType>
+      <destinationId>5896cf88-017d-1000-c2a7-1deab582ef70</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship/>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
+      <id>5e108ccc-017d-1000-96f8-ec9f3796be8b</id>
+      <name/>
+      <bendPoints>
+        <bendPoint x="1192.0" y="-8.0"/>
+      </bendPoints>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>de67351f-6e63-4557-6115-d32b0bb45420</sourceId>
+      <sourceGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</sourceGroupId>
+      <sourceType>OUTPUT_PORT</sourceType>
+      <destinationId>9e113471-88c3-3cb6-39c5-3282573bad04</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship/>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
     <connection>
       <id>6662d013-0c86-3e6c-2888-9cc282695165</id>
       <name/>
@@ -400,18 +818,38 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
-      <id>09b228d7-f1ed-377d-eb9c-d68917c7de86</id>
+      <id>5e0ee92d-017d-1000-fba9-62cdfab055d8</id>
+      <name>Retry</name>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>9e113471-88c3-3cb6-39c5-3282573bad04</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>535627d4-d4fb-4963-7331-41b3f418e51c</destinationId>
+      <destinationGroupId>d80fe614-b7e0-46bc-6cf9-ada564c87885</destinationGroupId>
+      <destinationType>INPUT_PORT</destinationType>
+      <relationship>failure</relationship>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
+      <id>017d100d-2a78-1e22-eae7-021e5c71242f</id>
       <name/>
       <bendPoints/>
       <labelIndex>1</labelIndex>
       <zIndex>0</zIndex>
-      <sourceId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</sourceId>
+      <sourceId>5896cf88-017d-1000-c2a7-1deab582ef70</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>686c9945-ac4f-39a5-3697-ca7c7597dc0d</destinationId>
-      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
-      <destinationType>PROCESSOR</destinationType>
-      <relationship>matched</relationship>
+      <destinationId>017d1003-2a78-1e22-3f7d-045ddfb19b46</destinationId>
+      <destinationGroupId>017d1002-2a78-1e22-538f-416aa31dce92</destinationGroupId>
+      <destinationType>INPUT_PORT</destinationType>
+      <relationship>failure</relationship>
       <maxWorkQueueSize>10000</maxWorkQueueSize>
       <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
       <flowFileExpiration>0 sec</flowFileExpiration>
@@ -428,7 +866,7 @@
       <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>f79a8ab1-8e00-39d0-0115-9ca1b759a49b</destinationId>
+      <destinationId>5896cf88-017d-1000-c2a7-1deab582ef70</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
