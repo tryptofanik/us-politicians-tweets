@@ -283,6 +283,8 @@ Resources:
           - Effect: "Allow"
             Action: "kinesis:ListStreams"
             Resource: !Sub "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/*"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole" #Provides write permissions to CloudWatch Logs
 
 
   RedditLambdaFunction:
@@ -349,6 +351,8 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole" #Provides write permissions to CloudWatch Logs
 
   TwitterSourceMappingKinesisStream:
     Type: 'AWS::Lambda::EventSourceMapping'
@@ -451,6 +455,7 @@ Resources:
           Resource: '*'
       Roles:
         - !Ref GetCurrentUserDataRole
+        - !Ref NiFiRole1
     
   ReadParametersPolicy:
     Type: 'AWS::IAM::Policy'
