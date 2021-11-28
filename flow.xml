@@ -1049,7 +1049,7 @@
         </property>
         <property>
           <name>Remote URL</name>
-          <value>https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/metadata-nifi/accounts_data/usernames.json</value>
+          <value>https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/accounts_data/usernames.json</value>
         </property>
         <property>
           <name>SSL Context Service</name>

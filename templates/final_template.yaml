@@ -64,7 +64,7 @@ Resources:
 
           sed -i 's/nifi.web.http.host=127.0.0.1/nifi.web.http.host=/' ./conf/nifi.properties
 
-          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/metadata-nifi/flow.xml || wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/master/flow.xml
 
           gzip flow.xml
 
