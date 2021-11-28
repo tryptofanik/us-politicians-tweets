@@ -64,7 +64,7 @@
     </processor>
     <processor>
       <id>66d1dbe6-017d-1000-f370-8b4757706cda</id>
-      <name>GenerateFlowFile</name>
+      <name>GenerateTestFiles</name>
       <position x="3216.0" y="-88.0"/>
       <styles/>
       <comment/>
@@ -1022,19 +1022,19 @@
       <flowfileConcurrency>UNBOUNDED</flowfileConcurrency>
       <flowfileOutboundPolicy>STREAM_WHEN_AVAILABLE</flowfileOutboundPolicy>
       <processor>
-        <id>017d1000-b706-13bc-4cd0-cfd7d2f2b028</id>
-        <name>ReplaceText</name>
-        <position x="992.0" y="296.0"/>
+        <id>017d1001-d49b-171e-e2f2-b84d0136ef2a</id>
+        <name>GetAccountsUsernames</name>
+        <position x="288.0" y="448.0"/>
         <styles/>
         <comment/>
-        <class>org.apache.nifi.processors.standard.ReplaceText</class>
+        <class>org.apache.nifi.processors.standard.InvokeHTTP</class>
         <bundle>
           <group>org.apache.nifi</group>
           <artifact>nifi-standard-nar</artifact>
           <version>1.13.2</version>
         </bundle>
         <maxConcurrentTasks>1</maxConcurrentTasks>
-        <schedulingPeriod>0 sec</schedulingPeriod>
+        <schedulingPeriod>3600 sec</schedulingPeriod>
         <penalizationPeriod>30 sec</penalizationPeriod>
         <yieldPeriod>1 sec</yieldPeriod>
         <bulletinLevel>WARN</bulletinLevel>
@@ -1044,42 +1044,140 @@
         <executionNode>ALL</executionNode>
         <runDurationNanos>0</runDurationNanos>
         <property>
-          <name>Regular Expression</name>
-          <value>(?s)(^.*$)</value>
+          <name>HTTP Method</name>
+          <value>GET</value>
         </property>
         <property>
-          <name>Replacement Value</name>
-          <value>{"user" : "$1"}</value>
+          <name>Remote URL</name>
+          <value>https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/metadata-nifi/accounts_data/usernames.json</value>
         </property>
         <property>
-          <name>Character Set</name>
-          <value>UTF-8</value>
+          <name>SSL Context Service</name>
         </property>
         <property>
-          <name>Maximum Buffer Size</name>
-          <value>1 MB</value>
+          <name>Connection Timeout</name>
+          <value>5 secs</value>
         </property>
         <property>
-          <name>Replacement Strategy</name>
-          <value>Regex Replace</value>
+          <name>Read Timeout</name>
+          <value>15 secs</value>
         </property>
         <property>
-          <name>Evaluation Mode</name>
-          <value>Line-by-Line</value>
+          <name>idle-timeout</name>
+          <value>5 mins</value>
         </property>
         <property>
-          <name>Line-by-Line Evaluation Mode</name>
-          <value>All</value>
+          <name>max-idle-connections</name>
+          <value>5</value>
         </property>
-        <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+        <property>
+          <name>Include Date Header</name>
+          <value>True</value>
+        </property>
+        <property>
+          <name>Follow Redirects</name>
+          <value>True</value>
+        </property>
+        <property>
+          <name>disable-http2</name>
+          <value>False</value>
+        </property>
+        <property>
+          <name>Attributes to Send</name>
+        </property>
+        <property>
+          <name>Useragent</name>
+        </property>
+        <property>
+          <name>Basic Authentication Username</name>
+        </property>
+        <property>
+          <name>Basic Authentication Password</name>
+        </property>
+        <property>
+          <name>proxy-configuration-service</name>
+        </property>
+        <property>
+          <name>Proxy Host</name>
+        </property>
+        <property>
+          <name>Proxy Port</name>
+        </property>
+        <property>
+          <name>Proxy Type</name>
+          <value>http</value>
+        </property>
+        <property>
+          <name>invokehttp-proxy-user</name>
+        </property>
+        <property>
+          <name>invokehttp-proxy-password</name>
+        </property>
+        <property>
+          <name>Put Response Body In Attribute</name>
+        </property>
+        <property>
+          <name>Max Length To Put In Attribute</name>
+          <value>256</value>
+        </property>
+        <property>
+          <name>Digest Authentication</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>Always Output Response</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>Add Response Headers to Request</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>Content-Type</name>
+          <value>${mime.type}</value>
+        </property>
+        <property>
+          <name>send-message-body</name>
+          <value>true</value>
+        </property>
+        <property>
+          <name>Use Chunked Encoding</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>Penalize on "No Retry"</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>use-etag</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>etag-max-cache-size</name>
+          <value>10MB</value>
+        </property>
+        <property>
+          <name>ignore-response-content</name>
+          <value>false</value>
+        </property>
+        <property>
+          <name>form-body-form-name</name>
+        </property>
+        <property>
+          <name>set-form-filename</name>
+          <value>true</value>
+        </property>
+        <autoTerminatedRelationship>Failure</autoTerminatedRelationship>
+        <autoTerminatedRelationship>Retry</autoTerminatedRelationship>
+        <autoTerminatedRelationship>No Retry</autoTerminatedRelationship>
       </processor>
       <processor>
-        <id>017d1000-d49b-13b3-1277-1baa465482c6</id>
-        <name>EvaluateJsonPath</name>
-        <position x="992.0" y="96.0"/>
+        <id>017d1002-d49b-171e-86b7-d95d4fa506d4</id>
+        <name>SplitJsonToRecords</name>
+        <position x="760.0" y="448.0"/>
         <styles/>
         <comment/>
-        <class>org.apache.nifi.processors.standard.EvaluateJsonPath</class>
+        <class>org.apache.nifi.processors.standard.SplitJson</class>
         <bundle>
           <group>org.apache.nifi</group>
           <artifact>nifi-standard-nar</artifact>
@@ -1096,95 +1194,57 @@
         <executionNode>ALL</executionNode>
         <runDurationNanos>0</runDurationNanos>
         <property>
-          <name>Destination</name>
-          <value>flowfile-content</value>
-        </property>
-        <property>
-          <name>Return Type</name>
-          <value>json</value>
-        </property>
-        <property>
-          <name>Path Not Found Behavior</name>
-          <value>ignore</value>
+          <name>JsonPath Expression</name>
+          <value>$.*</value>
         </property>
         <property>
           <name>Null Value Representation</name>
           <value>empty string</value>
         </property>
-        <property>
-          <name>output</name>
-          <value>$.user</value>
-        </property>
         <autoTerminatedRelationship>failure</autoTerminatedRelationship>
-        <autoTerminatedRelationship>unmatched</autoTerminatedRelationship>
+        <autoTerminatedRelationship>original</autoTerminatedRelationship>
       </processor>
-      <inputPort>
-        <id>63bf87d0-017d-1000-66b6-3b161ae146d6</id>
-        <name>json</name>
-        <position x="408.0" y="136.0"/>
-        <comments/>
-        <scheduledState>RUNNING</scheduledState>
-      </inputPort>
       <outputPort>
-        <id>017d1003-b706-13bc-341e-209230f7b57b</id>
-        <name>json</name>
-        <position x="392.0" y="344.0"/>
+        <id>017d1008-d49b-171e-4d03-c02f10aed4ef</id>
+        <name>username</name>
+        <position x="1320.0" y="488.0"/>
         <comments/>
         <scheduledState>RUNNING</scheduledState>
       </outputPort>
       <connection>
-        <id>017d1002-b706-13bc-9c22-7254110c35ec</id>
+        <id>017d1009-d49b-171e-44e6-d2b60b4ae53c</id>
         <name/>
         <bendPoints/>
         <labelIndex>1</labelIndex>
         <zIndex>0</zIndex>
-        <sourceId>017d1000-d49b-13b3-1277-1baa465482c6</sourceId>
+        <sourceId>017d1002-d49b-171e-86b7-d95d4fa506d4</sourceId>
         <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
         <sourceType>PROCESSOR</sourceType>
-        <destinationId>017d1000-b706-13bc-4cd0-cfd7d2f2b028</destinationId>
-        <destinationGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</destinationGroupId>
-        <destinationType>PROCESSOR</destinationType>
-        <relationship>matched</relationship>
-        <maxWorkQueueSize>10000</maxWorkQueueSize>
-        <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-        <flowFileExpiration>0 sec</flowFileExpiration>
-        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-        <partitioningAttribute/>
-        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-      </connection>
-      <connection>
-        <id>017d1001-b706-13bc-6edb-8022371a3d59</id>
-        <name/>
-        <bendPoints/>
-        <labelIndex>1</labelIndex>
-        <zIndex>0</zIndex>
-        <sourceId>63bf87d0-017d-1000-66b6-3b161ae146d6</sourceId>
-        <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
-        <sourceType>INPUT_PORT</sourceType>
-        <destinationId>017d1000-d49b-13b3-1277-1baa465482c6</destinationId>
-        <destinationGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</destinationGroupId>
-        <destinationType>PROCESSOR</destinationType>
-        <relationship/>
-        <maxWorkQueueSize>10000</maxWorkQueueSize>
-        <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-        <flowFileExpiration>0 sec</flowFileExpiration>
-        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-        <partitioningAttribute/>
-        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-      </connection>
-      <connection>
-        <id>017d1004-b706-13bc-4a4b-d0a0de2d9a29</id>
-        <name/>
-        <bendPoints/>
-        <labelIndex>1</labelIndex>
-        <zIndex>0</zIndex>
-        <sourceId>017d1000-b706-13bc-4cd0-cfd7d2f2b028</sourceId>
-        <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
-        <sourceType>PROCESSOR</sourceType>
-        <destinationId>017d1003-b706-13bc-341e-209230f7b57b</destinationId>
+        <destinationId>017d1008-d49b-171e-4d03-c02f10aed4ef</destinationId>
         <destinationGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</destinationGroupId>
         <destinationType>OUTPUT_PORT</destinationType>
-        <relationship>success</relationship>
+        <relationship>split</relationship>
+        <maxWorkQueueSize>10000</maxWorkQueueSize>
+        <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+        <flowFileExpiration>0 sec</flowFileExpiration>
+        <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+        <partitioningAttribute/>
+        <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+      </connection>
+      <connection>
+        <id>017d1003-d49b-171e-59d3-a693adeeba6d</id>
+        <name/>
+        <bendPoints/>
+        <labelIndex>1</labelIndex>
+        <zIndex>0</zIndex>
+        <sourceId>017d1001-d49b-171e-e2f2-b84d0136ef2a</sourceId>
+        <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
+        <sourceType>PROCESSOR</sourceType>
+        <destinationId>017d1002-d49b-171e-86b7-d95d4fa506d4</destinationId>
+        <destinationGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</destinationGroupId>
+        <destinationType>PROCESSOR</destinationType>
+        <relationship>Response</relationship>
+        <relationship>Original</relationship>
         <maxWorkQueueSize>10000</maxWorkQueueSize>
         <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
         <flowFileExpiration>0 sec</flowFileExpiration>
@@ -1193,26 +1253,6 @@
         <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
       </connection>
     </processGroup>
-    <connection>
-      <id>63b5cbfa-017d-1000-cc7a-a39d35b3e7eb</id>
-      <name/>
-      <bendPoints/>
-      <labelIndex>1</labelIndex>
-      <zIndex>0</zIndex>
-      <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
-      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
-      <sourceType>PROCESSOR</sourceType>
-      <destinationId>63bf87d0-017d-1000-66b6-3b161ae146d6</destinationId>
-      <destinationGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</destinationGroupId>
-      <destinationType>INPUT_PORT</destinationType>
-      <relationship>success</relationship>
-      <maxWorkQueueSize>10000</maxWorkQueueSize>
-      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-      <flowFileExpiration>0 sec</flowFileExpiration>
-      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-      <partitioningAttribute/>
-      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-    </connection>
     <connection>
       <id>017d100e-2a78-1e22-62ae-ac99c4c15bc0</id>
       <name/>
@@ -1359,6 +1399,26 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
+      <id>017d100a-d49b-171e-ba71-1f09787358bc</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>017d1008-d49b-171e-4d03-c02f10aed4ef</sourceId>
+      <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
+      <sourceType>OUTPUT_PORT</sourceType>
+      <destinationId>07b384cd-e347-3a77-456e-7dfe0e82d46e</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship/>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
       <id>469f381b-8214-338b-2a59-e73ea7547078</id>
       <name/>
       <bendPoints/>
@@ -1371,26 +1431,6 @@
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
-      <maxWorkQueueSize>10000</maxWorkQueueSize>
-      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-      <flowFileExpiration>0 sec</flowFileExpiration>
-      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-      <partitioningAttribute/>
-      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-    </connection>
-    <connection>
-      <id>017d1005-b706-13bc-bf27-02e9c05d8f3f</id>
-      <name/>
-      <bendPoints/>
-      <labelIndex>1</labelIndex>
-      <zIndex>0</zIndex>
-      <sourceId>017d1003-b706-13bc-341e-209230f7b57b</sourceId>
-      <sourceGroupId>63bf4308-017d-1000-b80f-0efcad32ee80</sourceGroupId>
-      <sourceType>OUTPUT_PORT</sourceType>
-      <destinationId>07b384cd-e347-3a77-456e-7dfe0e82d46e</destinationId>
-      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
-      <destinationType>PROCESSOR</destinationType>
-      <relationship/>
       <maxWorkQueueSize>10000</maxWorkQueueSize>
       <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
       <flowFileExpiration>0 sec</flowFileExpiration>
