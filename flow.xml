@@ -63,6 +63,56 @@
       <autoTerminatedRelationship>failure</autoTerminatedRelationship>
     </processor>
     <processor>
+      <id>66d1dbe6-017d-1000-f370-8b4757706cda</id>
+      <name>GenerateFlowFile</name>
+      <position x="3216.0" y="-88.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.standard.GenerateFlowFile</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-standard-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
+      <maxConcurrentTasks>1</maxConcurrentTasks>
+      <schedulingPeriod>1 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>File Size</name>
+        <value>128B</value>
+      </property>
+      <property>
+        <name>Batch Size</name>
+        <value>1</value>
+      </property>
+      <property>
+        <name>Data Format</name>
+        <value>Text</value>
+      </property>
+      <property>
+        <name>Unique FlowFiles</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>generate-ff-custom-text</name>
+        <value>aaaa</value>
+      </property>
+      <property>
+        <name>character-set</name>
+        <value>UTF-8</value>
+      </property>
+      <property>
+        <name>mime-type</name>
+      </property>
+    </processor>
+    <processor>
       <id>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</id>
       <name>Listen-Twitter</name>
       <position x="1904.0" y="424.0"/>
@@ -422,25 +472,88 @@
       </property>
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
     </processor>
-    <outputPort>
-      <id>017d100c-b706-13bc-1a41-4ca7c63eb730</id>
-      <name>Tu będzie Hadoop</name>
-      <position x="3216.0" y="-240.0"/>
-      <comments/>
-      <scheduledState>STOPPED</scheduledState>
+    <processor>
+      <id>66d24c43-017d-1000-5ea8-29209d4154ce</id>
+      <name>PutHDFS</name>
+      <position x="3808.0" y="-264.0"/>
+      <styles/>
+      <comment/>
+      <class>org.apache.nifi.processors.hadoop.PutHDFS</class>
+      <bundle>
+        <group>org.apache.nifi</group>
+        <artifact>nifi-hadoop-nar</artifact>
+        <version>1.13.2</version>
+      </bundle>
       <maxConcurrentTasks>1</maxConcurrentTasks>
-      <allowRemoteAccess>true</allowRemoteAccess>
-    </outputPort>
-    <label>
-      <id>017d100e-b706-13bc-2b3e-1e0f5bfabff5</id>
-      <position x="2648.0" y="-296.0"/>
-      <size height="880.0" width="968.0"/>
-      <styles>
-        <style name="font-size">22px</style>
-      </styles>
-      <value>Metadata extraction
-</value>
-    </label>
+      <schedulingPeriod>0 sec</schedulingPeriod>
+      <penalizationPeriod>30 sec</penalizationPeriod>
+      <yieldPeriod>1 sec</yieldPeriod>
+      <bulletinLevel>WARN</bulletinLevel>
+      <lossTolerant>false</lossTolerant>
+      <scheduledState>RUNNING</scheduledState>
+      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
+      <executionNode>ALL</executionNode>
+      <runDurationNanos>0</runDurationNanos>
+      <property>
+        <name>Hadoop Configuration Resources</name>
+        <value>/home/ubuntu/core-site.xml</value>
+      </property>
+      <property>
+        <name>kerberos-credentials-service</name>
+      </property>
+      <property>
+        <name>Kerberos Principal</name>
+      </property>
+      <property>
+        <name>Kerberos Keytab</name>
+      </property>
+      <property>
+        <name>Kerberos Password</name>
+      </property>
+      <property>
+        <name>Kerberos Relogin Period</name>
+        <value>4 hours</value>
+      </property>
+      <property>
+        <name>Additional Classpath Resources</name>
+      </property>
+      <property>
+        <name>Directory</name>
+        <value>/user/root</value>
+      </property>
+      <property>
+        <name>Conflict Resolution Strategy</name>
+        <value>fail</value>
+      </property>
+      <property>
+        <name>Block Size</name>
+      </property>
+      <property>
+        <name>IO Buffer Size</name>
+      </property>
+      <property>
+        <name>Replication</name>
+      </property>
+      <property>
+        <name>Permissions umask</name>
+      </property>
+      <property>
+        <name>Remote Owner</name>
+      </property>
+      <property>
+        <name>Remote Group</name>
+      </property>
+      <property>
+        <name>Compression codec</name>
+        <value>NONE</value>
+      </property>
+      <property>
+        <name>Ignore Locality</name>
+        <value>false</value>
+      </property>
+      <autoTerminatedRelationship>success</autoTerminatedRelationship>
+      <autoTerminatedRelationship>failure</autoTerminatedRelationship>
+    </processor>
     <label>
       <id>017d1000-2a78-1e22-da6a-8b74eb1b7516</id>
       <position x="1824.0" y="-296.0"/>
@@ -458,6 +571,16 @@
         <style name="font-size">22px</style>
       </styles>
       <value>Reddit pipeline</value>
+    </label>
+    <label>
+      <id>017d100e-b706-13bc-2b3e-1e0f5bfabff5</id>
+      <position x="2648.0" y="-296.0"/>
+      <size height="880.0" width="968.0"/>
+      <styles>
+        <style name="font-size">22px</style>
+      </styles>
+      <value>Metadata extraction
+</value>
     </label>
     <processGroup>
       <id>017d1002-2a78-1e22-538f-416aa31dce92</id>
@@ -1121,9 +1244,9 @@
       <sourceId>a58d1e88-3ca5-3079-7518-4723637d8841</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>017d100c-b706-13bc-1a41-4ca7c63eb730</destinationId>
+      <destinationId>66d24c43-017d-1000-5ea8-29209d4154ce</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
-      <destinationType>OUTPUT_PORT</destinationType>
+      <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
       <maxWorkQueueSize>10000</maxWorkQueueSize>
       <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
@@ -1268,6 +1391,26 @@
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship/>
+      <maxWorkQueueSize>10000</maxWorkQueueSize>
+      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
+      <partitioningAttribute/>
+      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
+    </connection>
+    <connection>
+      <id>66d371a3-017d-1000-0f79-8adb9e69fa4c</id>
+      <name/>
+      <bendPoints/>
+      <labelIndex>1</labelIndex>
+      <zIndex>0</zIndex>
+      <sourceId>66d1dbe6-017d-1000-f370-8b4757706cda</sourceId>
+      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
+      <sourceType>PROCESSOR</sourceType>
+      <destinationId>66d24c43-017d-1000-5ea8-29209d4154ce</destinationId>
+      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
+      <destinationType>PROCESSOR</destinationType>
+      <relationship>success</relationship>
       <maxWorkQueueSize>10000</maxWorkQueueSize>
       <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
       <flowFileExpiration>0 sec</flowFileExpiration>
