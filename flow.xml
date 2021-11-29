@@ -63,56 +63,6 @@
       <autoTerminatedRelationship>failure</autoTerminatedRelationship>
     </processor>
     <processor>
-      <id>66d1dbe6-017d-1000-f370-8b4757706cda</id>
-      <name>GenerateTestFiles</name>
-      <position x="3216.0" y="-88.0"/>
-      <styles/>
-      <comment/>
-      <class>org.apache.nifi.processors.standard.GenerateFlowFile</class>
-      <bundle>
-        <group>org.apache.nifi</group>
-        <artifact>nifi-standard-nar</artifact>
-        <version>1.13.2</version>
-      </bundle>
-      <maxConcurrentTasks>1</maxConcurrentTasks>
-      <schedulingPeriod>1 sec</schedulingPeriod>
-      <penalizationPeriod>30 sec</penalizationPeriod>
-      <yieldPeriod>1 sec</yieldPeriod>
-      <bulletinLevel>WARN</bulletinLevel>
-      <lossTolerant>false</lossTolerant>
-      <scheduledState>RUNNING</scheduledState>
-      <schedulingStrategy>TIMER_DRIVEN</schedulingStrategy>
-      <executionNode>ALL</executionNode>
-      <runDurationNanos>0</runDurationNanos>
-      <property>
-        <name>File Size</name>
-        <value>128B</value>
-      </property>
-      <property>
-        <name>Batch Size</name>
-        <value>1</value>
-      </property>
-      <property>
-        <name>Data Format</name>
-        <value>Text</value>
-      </property>
-      <property>
-        <name>Unique FlowFiles</name>
-        <value>false</value>
-      </property>
-      <property>
-        <name>generate-ff-custom-text</name>
-        <value>aaaa</value>
-      </property>
-      <property>
-        <name>character-set</name>
-        <value>UTF-8</value>
-      </property>
-      <property>
-        <name>mime-type</name>
-      </property>
-    </processor>
-    <processor>
       <id>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</id>
       <name>Listen-Twitter</name>
       <position x="1904.0" y="424.0"/>
@@ -473,15 +423,15 @@
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
     </processor>
     <processor>
-      <id>66d24c43-017d-1000-5ea8-29209d4154ce</id>
-      <name>PutHDFS</name>
-      <position x="3808.0" y="-264.0"/>
+      <id>6842f438-017d-1000-2ba8-abd4a2871b39</id>
+      <name>PutS3Object</name>
+      <position x="3288.0" y="-256.0"/>
       <styles/>
       <comment/>
-      <class>org.apache.nifi.processors.hadoop.PutHDFS</class>
+      <class>org.apache.nifi.processors.aws.s3.PutS3Object</class>
       <bundle>
         <group>org.apache.nifi</group>
-        <artifact>nifi-hadoop-nar</artifact>
+        <artifact>nifi-aws-nar</artifact>
         <version>1.13.2</version>
       </bundle>
       <maxConcurrentTasks>1</maxConcurrentTasks>
@@ -495,61 +445,144 @@
       <executionNode>ALL</executionNode>
       <runDurationNanos>0</runDurationNanos>
       <property>
-        <name>Hadoop Configuration Resources</name>
-        <value>/home/ubuntu/core-site.xml</value>
+        <name>Object Key</name>
+        <value>${UUID()}.json</value>
       </property>
       <property>
-        <name>kerberos-credentials-service</name>
+        <name>Bucket</name>
+        <value>hadoop-data2</value>
       </property>
       <property>
-        <name>Kerberos Principal</name>
+        <name>Content Type</name>
       </property>
       <property>
-        <name>Kerberos Keytab</name>
+        <name>Content Disposition</name>
       </property>
       <property>
-        <name>Kerberos Password</name>
+        <name>Cache Control</name>
       </property>
       <property>
-        <name>Kerberos Relogin Period</name>
-        <value>4 hours</value>
+        <name>Access Key</name>
       </property>
       <property>
-        <name>Additional Classpath Resources</name>
+        <name>Secret Key</name>
       </property>
       <property>
-        <name>Directory</name>
-        <value>/user/root</value>
+        <name>Credentials File</name>
       </property>
       <property>
-        <name>Conflict Resolution Strategy</name>
-        <value>fail</value>
+        <name>AWS Credentials Provider service</name>
+        <value>15ea194f-017d-1000-2a8f-e937786a45d4</value>
       </property>
       <property>
-        <name>Block Size</name>
+        <name>s3-object-tags-prefix</name>
       </property>
       <property>
-        <name>IO Buffer Size</name>
-      </property>
-      <property>
-        <name>Replication</name>
-      </property>
-      <property>
-        <name>Permissions umask</name>
-      </property>
-      <property>
-        <name>Remote Owner</name>
-      </property>
-      <property>
-        <name>Remote Group</name>
-      </property>
-      <property>
-        <name>Compression codec</name>
-        <value>NONE</value>
-      </property>
-      <property>
-        <name>Ignore Locality</name>
+        <name>s3-object-remove-tags-prefix</name>
         <value>false</value>
+      </property>
+      <property>
+        <name>Storage Class</name>
+        <value>Standard</value>
+      </property>
+      <property>
+        <name>Region</name>
+        <value>us-east-1</value>
+      </property>
+      <property>
+        <name>Communications Timeout</name>
+        <value>30 secs</value>
+      </property>
+      <property>
+        <name>Expiration Time Rule</name>
+      </property>
+      <property>
+        <name>FullControl User List</name>
+        <value>${s3.permissions.full.users}</value>
+      </property>
+      <property>
+        <name>Read Permission User List</name>
+        <value>${s3.permissions.read.users}</value>
+      </property>
+      <property>
+        <name>Write Permission User List</name>
+        <value>${s3.permissions.write.users}</value>
+      </property>
+      <property>
+        <name>Read ACL User List</name>
+        <value>${s3.permissions.readacl.users}</value>
+      </property>
+      <property>
+        <name>Write ACL User List</name>
+        <value>${s3.permissions.writeacl.users}</value>
+      </property>
+      <property>
+        <name>Owner</name>
+        <value>${s3.owner}</value>
+      </property>
+      <property>
+        <name>canned-acl</name>
+        <value>${s3.permissions.cannedacl}</value>
+      </property>
+      <property>
+        <name>SSL Context Service</name>
+      </property>
+      <property>
+        <name>Endpoint Override URL</name>
+      </property>
+      <property>
+        <name>Signer Override</name>
+        <value>Default Signature</value>
+      </property>
+      <property>
+        <name>Multipart Threshold</name>
+        <value>5 GB</value>
+      </property>
+      <property>
+        <name>Multipart Part Size</name>
+        <value>5 GB</value>
+      </property>
+      <property>
+        <name>Multipart Upload AgeOff Interval</name>
+        <value>60 min</value>
+      </property>
+      <property>
+        <name>Multipart Upload Max Age Threshold</name>
+        <value>7 days</value>
+      </property>
+      <property>
+        <name>s3-temporary-directory-multipart</name>
+        <value>${java.io.tmpdir}</value>
+      </property>
+      <property>
+        <name>server-side-encryption</name>
+        <value>None</value>
+      </property>
+      <property>
+        <name>encryption-service</name>
+      </property>
+      <property>
+        <name>use-chunked-encoding</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>use-path-style-access</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>proxy-configuration-service</name>
+      </property>
+      <property>
+        <name>Proxy Host</name>
+      </property>
+      <property>
+        <name>Proxy Host Port</name>
+      </property>
+      <property>
+        <name>proxy-user-name</name>
+      </property>
+      <property>
+        <name>proxy-user-password</name>
       </property>
       <autoTerminatedRelationship>success</autoTerminatedRelationship>
       <autoTerminatedRelationship>failure</autoTerminatedRelationship>
@@ -564,15 +597,6 @@
       <value>Twitter pipeline</value>
     </label>
     <label>
-      <id>5e222a78-017d-1000-97aa-a9d82353bf94</id>
-      <position x="1008.0" y="-296.0"/>
-      <size height="880.0" width="752.0"/>
-      <styles>
-        <style name="font-size">22px</style>
-      </styles>
-      <value>Reddit pipeline</value>
-    </label>
-    <label>
       <id>017d100e-b706-13bc-2b3e-1e0f5bfabff5</id>
       <position x="2648.0" y="-296.0"/>
       <size height="880.0" width="968.0"/>
@@ -581,6 +605,15 @@
       </styles>
       <value>Metadata extraction
 </value>
+    </label>
+    <label>
+      <id>5e222a78-017d-1000-97aa-a9d82353bf94</id>
+      <position x="1008.0" y="-296.0"/>
+      <size height="880.0" width="752.0"/>
+      <styles>
+        <style name="font-size">22px</style>
+      </styles>
+      <value>Reddit pipeline</value>
     </label>
     <processGroup>
       <id>017d1002-2a78-1e22-538f-416aa31dce92</id>
@@ -1284,7 +1317,7 @@
       <sourceId>a58d1e88-3ca5-3079-7518-4723637d8841</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>66d24c43-017d-1000-5ea8-29209d4154ce</destinationId>
+      <destinationId>6842f438-017d-1000-2ba8-abd4a2871b39</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
@@ -1379,26 +1412,6 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
-      <id>63acb793-017d-1000-00d1-99b79b8308cf</id>
-      <name/>
-      <bendPoints/>
-      <labelIndex>1</labelIndex>
-      <zIndex>0</zIndex>
-      <sourceId>07b384cd-e347-3a77-456e-7dfe0e82d46e</sourceId>
-      <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
-      <sourceType>PROCESSOR</sourceType>
-      <destinationId>a58d1e88-3ca5-3079-7518-4723637d8841</destinationId>
-      <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
-      <destinationType>PROCESSOR</destinationType>
-      <relationship>success</relationship>
-      <maxWorkQueueSize>10000</maxWorkQueueSize>
-      <maxWorkQueueDataSize>1 GB</maxWorkQueueDataSize>
-      <flowFileExpiration>0 sec</flowFileExpiration>
-      <loadBalanceStrategy>DO_NOT_LOAD_BALANCE</loadBalanceStrategy>
-      <partitioningAttribute/>
-      <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
-    </connection>
-    <connection>
       <id>017d100a-d49b-171e-ba71-1f09787358bc</id>
       <name/>
       <bendPoints/>
@@ -1419,15 +1432,15 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
-      <id>469f381b-8214-338b-2a59-e73ea7547078</id>
+      <id>63acb793-017d-1000-00d1-99b79b8308cf</id>
       <name/>
       <bendPoints/>
       <labelIndex>1</labelIndex>
       <zIndex>0</zIndex>
-      <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
+      <sourceId>07b384cd-e347-3a77-456e-7dfe0e82d46e</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>5896cf88-017d-1000-c2a7-1deab582ef70</destinationId>
+      <destinationId>a58d1e88-3ca5-3079-7518-4723637d8841</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
@@ -1439,15 +1452,15 @@
       <loadBalanceCompression>DO_NOT_COMPRESS</loadBalanceCompression>
     </connection>
     <connection>
-      <id>66d371a3-017d-1000-0f79-8adb9e69fa4c</id>
+      <id>469f381b-8214-338b-2a59-e73ea7547078</id>
       <name/>
       <bendPoints/>
       <labelIndex>1</labelIndex>
       <zIndex>0</zIndex>
-      <sourceId>66d1dbe6-017d-1000-f370-8b4757706cda</sourceId>
+      <sourceId>5fd8d9a6-b2ed-39eb-d4cd-098f84854d3f</sourceId>
       <sourceGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</sourceGroupId>
       <sourceType>PROCESSOR</sourceType>
-      <destinationId>66d24c43-017d-1000-5ea8-29209d4154ce</destinationId>
+      <destinationId>5896cf88-017d-1000-c2a7-1deab582ef70</destinationId>
       <destinationGroupId>15e85cfa-017d-1000-34e5-2c1ebd271224</destinationGroupId>
       <destinationType>PROCESSOR</destinationType>
       <relationship>success</relationship>
