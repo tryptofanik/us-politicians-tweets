@@ -421,7 +421,31 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Path: /
-    
+  ReadWriteHadoopPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadWriteHadoopPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:ListAllMyBuckets'
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - "s3:ListBucket"
+              - "s3:GetBucketLocation"
+            Resource: "arn:aws:s3:::hadoop-data2"
+          - Effect: Allow
+            Action:
+              - "s3:GetObject"
+              - "s3:PutObject"
+              - "s3:DeleteObject"
+            Resource: "arn:aws:s3:::hadoop-data2/*"
+      Roles:
+        - !Ref NiFiRole1
+
   PutKinesisDataStreamPolicy:
     Type: 'AWS::IAM::Policy'
     Properties:
