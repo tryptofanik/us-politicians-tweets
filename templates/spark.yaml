@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: 2010-09-09
+# Resources
+Resources:
+  SparkInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      SecurityGroupIds:
+        - !Ref SparkInstanceSecurityGroup
+      IamInstanceProfile: !Ref SparkInstanceProfile
+      KeyName: 'nifi-ft'
+      ImageId: 'ami-0747bdcabd34c712a'
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+
+          sudo su
+
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+          apt-get update -y
+
+          sudo apt install default-jdk scala git -y
+
+          cd ~
+
+          wget https://downloads.apache.org/spark/spark-3.1.2/spark-3.1.2-bin-hadoop2.7.tgz
+
+          tar xvf spark-*
+
+          sudo mv spark-3.1.2-bin-hadoop2.7 /opt/spark
+
+          source ~/.profile
+
+          /opt/spark/sbin/start-master.sh
+
+
+
+  SparkInstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Group for Spark instance
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          ToPort: '8080'
+          FromPort: '8080'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '22'
+          FromPort: '22'
+          CidrIp: 0.0.0.0/0
+
+  SparkInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref SparkRole
+
+  SparkRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: SparkRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+  RunEC2Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: RunEC2Policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ec2:RunInstances'
+            - 'ec2:AttachVolume'
+            - 'ec2:CreateVolume'
+            - 'ec2:CreateSecurityGroup'
+          Resource: '*'
+      Roles:
+        - !Ref SparkRole
+
+Outputs:
+  IP:
+    Description: IP
+    Value: !Sub "ubuntu@{SparkInstance.PublicIp}"
+          
+#  ReadDynamoDBPolicy:
+#    Type: 'AWS::IAM::Policy'
+#    DependsOn: TweetsDynamoDBTable
+#    Properties:
+#      PolicyName: ReadTweetsPolicy
+#      PolicyDocument:
+#        Version: 2012-10-17
+#        Statement:
+#          Effect: Allow
+#          Action:
+#            - 'dynamodb:Scan'
+#            - 'dynamodb:Describe*'
+#            - 'dynamodb:Get*'
+#            - 'dynamodb:Query'
+#            - 'dynamodb:List*'
+#          Resource: "*"
+#      Roles:
+#        - !Ref SparkRole
