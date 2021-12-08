@@ -51,8 +51,12 @@ Resources:
           FromPort: '8080'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
+          ToPort: '4040'
+          FromPort: '4040'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
           ToPort: '8888'
-          FromPort: '8889'
+          FromPort: '8888'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           ToPort: '4040'
@@ -110,7 +114,7 @@ Outputs:
     Value: !Sub "http://${SparkInstance.PublicIp}:8080"
   Jupyter:
     Description: Link to jupyter notebook with spark installed
-    Value: !Sub "http://${SparkInstance.PublicIp}:8889"
+    Value: !Sub "http://${SparkInstance.PublicIp}:8888"
 #  ReadDynamoDBPolicy:
 #    Type: 'AWS::IAM::Policy'
 #    DependsOn: TweetsDynamoDBTable
