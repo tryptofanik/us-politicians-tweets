@@ -13,28 +13,33 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash -xe
-
           sudo su
-
           exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-
           apt-get update -y
-
-          sudo apt install default-jdk scala git -y
-
+          sudo apt install default-jdk scala git python3-pip -y
           cd ~
-
           wget https://downloads.apache.org/spark/spark-3.1.2/spark-3.1.2-bin-hadoop2.7.tgz
-
           tar xvf spark-*
-
           sudo mv spark-3.1.2-bin-hadoop2.7 /opt/spark
-
-          source ~/.profile
-
+          echo "PATH=\"$PATH:/opt/spark/sbin:/opt/spark/bin\"" >> /home/ubuntu/.profile
+          source /home/ubuntu/.profile
           /opt/spark/sbin/start-master.sh
-
-
+          sudo apt install python3-pip
+          pip3 install notebook
+          export PYSPARK_DRIVER_PYTHON='jupyter'
+          export PYSPARK_DRIVER_PYTHON_OPTS='notebook --allow-root --no-browser --port=8888'
+          jupyter notebook --generate-config -y
+          echo "conf = get_config()" >> /root/.jupyter/jupyter_notebook_config.py
+          echo "conf.NotebookApp.ip = '0.0.0.0'">> /root/.jupyter/jupyter_notebook_config.py
+          echo "conf.NotebookApp.port = 8888" >> /root/.jupyter/jupyter_notebook_config.py
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/set_jupyter_passwd.py
+          ipython set_jupyter_passwd.py
+          rm set_jupyter_passwd.py
+          mkdir /spark-workspace
+          cd /spark-workspace
+          wget http://snap.stanford.edu/data/redditSubmissions.csv.gz
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/example.ipynb
+          pyspark > error.log &
 
   SparkInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -44,6 +49,14 @@ Resources:
         - IpProtocol: tcp
           ToPort: '8080'
           FromPort: '8080'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '8888'
+          FromPort: '8889'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          ToPort: '4040'
+          FromPort: '4040'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           ToPort: '22'
@@ -91,8 +104,13 @@ Resources:
 Outputs:
   IP:
     Description: IP
-    Value: !Sub "ubuntu@{SparkInstance.PublicIp}"
-          
+    Value: !Sub "ubuntu@${SparkInstance.PublicIp}"
+  SparkUI:
+    Description: Spark UI
+    Value: !Sub "http://${SparkInstance.PublicIp}:8080"
+  Jupyter:
+    Description: Link to jupyter notebook with spark installed
+    Value: !Sub "http://${SparkInstance.PublicIp}:8889"
 #  ReadDynamoDBPolicy:
 #    Type: 'AWS::IAM::Policy'
 #    DependsOn: TweetsDynamoDBTable
