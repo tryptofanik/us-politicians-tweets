@@ -39,7 +39,7 @@ Resources:
           cd /spark-workspace
           wget http://snap.stanford.edu/data/redditSubmissions.csv.gz
           wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/example.ipynb
-          pyspark > error.log &
+          pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1 > error.log &
 
   SparkInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -105,6 +105,25 @@ Resources:
       Roles:
         - !Ref SparkRole
 
+  ReadWriteDynamoDB:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadWriteDynamoDB
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'dynamodb:CreateTable'
+            - 'dynamodb:PutItem'
+            - 'dynamodb:DescribeTable'
+            - 'dynamodb:DeleteItem'
+            - 'dynamodb:GetItem'
+            - 'dynamodb:Scan'
+            - 'dynamodb:Query'
+          Resource: 'arn:aws:dynamodb:*:297252523626:table/*'
+      Roles:
+        - !Ref SparkRole
 Outputs:
   IP:
     Description: IP
