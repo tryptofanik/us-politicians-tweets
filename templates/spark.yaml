@@ -4,11 +4,11 @@ Resources:
   SparkInstance:
     Type: 'AWS::EC2::Instance'
     Properties:
-      InstanceType: 't2.micro'
+      InstanceType: 't2.small'
       SecurityGroupIds:
         - !Ref SparkInstanceSecurityGroup
       IamInstanceProfile: !Ref SparkInstanceProfile
-      KeyName: 'nifi-ft'
+      KeyName: 'nifi'
       ImageId: 'ami-0747bdcabd34c712a'
       UserData:
         Fn::Base64: !Sub |
@@ -39,7 +39,7 @@ Resources:
           cd /spark-workspace
           wget http://snap.stanford.edu/data/redditSubmissions.csv.gz
           wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/example.ipynb
-          pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1 > error.log &
+          /opt/spark/bin/pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1 > error.log &
 
   SparkInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
