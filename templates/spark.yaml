@@ -39,6 +39,7 @@ Resources:
           cd /spark-workspace
           wget http://snap.stanford.edu/data/redditSubmissions.csv.gz
           wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/example.ipynb
+          wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/EDA.ipynb
           /opt/spark/bin/pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1 > error.log &
 
   SparkInstanceSecurityGroup:
