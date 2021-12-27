@@ -40,7 +40,8 @@ Resources:
           wget http://snap.stanford.edu/data/redditSubmissions.csv.gz
           wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/example.ipynb
           wget https://raw.githubusercontent.com/tryptofanik/us-politicians-tweets/spark/spark/EDA.ipynb
-          /opt/spark/bin/pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1 > error.log &
+          wget https://s3.amazonaws.com/auxdata.johnsnowlabs.com/public/jars/spark-nlp-assembly-3.3.4.jar -P /opt/spark/jars
+          /opt/spark/bin/pyspark --packages com.audienceproject:spark-dynamodb_2.12:1.1.1,com.johnsnowlabs.nlp:spark-nlp_2.12:3.3.4 > error.log &
 
   SparkInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
