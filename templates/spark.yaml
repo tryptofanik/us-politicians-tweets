@@ -25,7 +25,7 @@ Resources:
           source /home/ubuntu/.profile
           /opt/spark/sbin/start-master.sh
           sudo apt install python3-pip
-          pip3 install notebook
+          pip3 install notebook boto3
           export PYSPARK_DRIVER_PYTHON='jupyter'
           export PYSPARK_DRIVER_PYTHON_OPTS='notebook --allow-root --no-browser --port=8888'
           jupyter notebook --generate-config -y
@@ -91,6 +91,23 @@ Resources:
             Action:
               - 'sts:AssumeRole'
       Path: /
+  ReadParametersPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ReadParametersPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action:
+            - 'ssm:GetParameterHistory'
+            - 'ssm:GetParametersByPath'
+            - 'ssm:GetParameters'
+            - 'ssm:GetParameter'
+          Resource: '*'
+      Roles:
+        - !Ref SparkRole
+
   RunEC2Policy:
     Type: 'AWS::IAM::Policy'
     Properties:
