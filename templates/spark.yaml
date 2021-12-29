@@ -53,7 +53,7 @@ Resources:
           FromPort: '8080'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          ToPort: '4040'
+          ToPort: '4050'
           FromPort: '4040'
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
@@ -123,7 +123,7 @@ Resources:
             - 'dynamodb:GetItem'
             - 'dynamodb:Scan'
             - 'dynamodb:Query'
-          Resource: 'arn:aws:dynamodb:*:297252523626:table/*'
+          Resource: '*'
       Roles:
         - !Ref SparkRole
 Outputs:
@@ -132,25 +132,7 @@ Outputs:
     Value: !Sub "ubuntu@${SparkInstance.PublicIp}"
   SparkUI:
     Description: Spark UI
-    Value: !Sub "http://${SparkInstance.PublicIp}:8080"
+    Value: !Sub "http://${SparkInstance.PublicIp}:4040"
   Jupyter:
     Description: Link to jupyter notebook with spark installed
     Value: !Sub "http://${SparkInstance.PublicIp}:8888"
-#  ReadDynamoDBPolicy:
-#    Type: 'AWS::IAM::Policy'
-#    DependsOn: TweetsDynamoDBTable
-#    Properties:
-#      PolicyName: ReadTweetsPolicy
-#      PolicyDocument:
-#        Version: 2012-10-17
-#        Statement:
-#          Effect: Allow
-#          Action:
-#            - 'dynamodb:Scan'
-#            - 'dynamodb:Describe*'
-#            - 'dynamodb:Get*'
-#            - 'dynamodb:Query'
-#            - 'dynamodb:List*'
-#          Resource: "*"
-#      Roles:
-#        - !Ref SparkRole
