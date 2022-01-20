@@ -32,8 +32,8 @@ class StreamListener(tweepy.Stream):
             "user": status.user.screen_name,
         }
         self.send_data(data=data)
-        with open(f"{self.save_path}/{status.id}.json", "w") as f:
-            json.dump(data, f)
+        # with open(f"{self.save_path}/{status.id}.json", "w") as f:
+        #     json.dump(data, f)
 
 
 def get_credentials():
