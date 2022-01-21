@@ -162,7 +162,7 @@ Resources:
   RedditStreamEC2:
     Type: 'AWS::EC2::Instance'
     Properties:
-      InstanceType: t2.small
+      InstanceType: t2.micro
       IamInstanceProfile: !Ref RedditStreamerInstanceProfile
       SecurityGroupIds:
         - !Ref RedditStreamerSG
@@ -652,7 +652,7 @@ Resources:
   TwitterStreamerEC2:
     Type: 'AWS::EC2::Instance'
     Properties:
-      InstanceType: t2.small
+      InstanceType: t2.micro
       IamInstanceProfile: !Ref TwitterStreamerInstanceProfile
       SecurityGroups:
         - !Ref TwitterStreamerSG
