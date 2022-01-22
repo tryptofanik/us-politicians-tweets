@@ -36,6 +36,8 @@ counts.sort()
 print(counts)
 
 app.layout = html.Div([
+    html.H1(children='Counts for each user mentioned'),
+    html.H3(children='Choose counts bigger than a set value'),
     dcc.Slider(
         id='my-slider',
         min=min(counts),
@@ -58,7 +60,7 @@ app.layout = html.Div([
 def display_color(day):
     response = dynamodb.Table('mentions-count').scan()
     df = pd.DataFrame(data=response['Items'], columns=['NROWS', 'mention'])
-    fig = px.bar(df[df["NROWS"] >= day], x='mention', y='NROWS')
+    fig = px.bar(df[df["NROWS"] >= day], x='mention', y='NROWS',labels={'NROWS':'number of mentions', 'mention':'username'})
     return fig
 
 
