@@ -36,7 +36,7 @@ def test():
     shutil.copyfile(os.path.join('test', 'trial.json'), 'trial.json')
     json_preprocess(r".")
     f3 = open('trial.json', "r+", encoding="utf-8")
-    assert json.load(f3, strict=False)
+    assert json.load(f3)
     f3.close()
 
 
