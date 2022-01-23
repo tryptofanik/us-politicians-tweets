@@ -9,17 +9,14 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import plotly.express as px
+from dash_extensions.enrich import Trigger
 
-session = boto3.Session(
-    aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-    aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-)
+# place the credentials file in ~/.aws/
+
+session = boto3.Session(profile_name="default")
 
 dynamodb = boto3.resource('dynamodb',
-                          aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-                          aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-                          region_name='us-east-1'
-)
+                          region_name='us-east-1')
 
 response = dynamodb.Table('mentions-count').scan()
 
@@ -51,18 +48,21 @@ app.layout = html.Div([
         step=1,
         value=1,
     ),
-    dcc.Graph(id="graph")
+    dcc.Graph(id="graph"),
+    dcc.Interval(id="trigger", interval=3000)
 ])
+
 
 @app.callback(
     Output("graph", "figure"),
-    [Input("my-slider", "value")])
-def display_color(day):
+    [Input("my-slider", "value"),
+     Trigger("trigger", "n_intervals")])
+def display_color(day, refresh_interval):
     response = dynamodb.Table('mentions-count').scan()
     df = pd.DataFrame(data=response['Items'], columns=['NROWS', 'mention'])
-    fig = px.bar(df[df["NROWS"] >= day], x='mention', y='NROWS',labels={'NROWS':'number of mentions', 'mention':'username'})
+    fig = px.bar(df[df["NROWS"] >= day], x='mention', y='NROWS',
+                 labels={'NROWS': 'number of mentions', 'mention': 'username'})
     return fig
-
 
 
 if __name__ == '__main__':
