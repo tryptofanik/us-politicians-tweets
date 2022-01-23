@@ -4,6 +4,7 @@ import boto3
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table as dt
 import pandas as pd
 import plotly.express as px
 from cloudpathlib import CloudPath
@@ -30,8 +31,9 @@ dynamodb = boto3.resource('dynamodb',
                           region_name='us-east-1')
 
 response = dynamodb.Table('mentions-count').scan()
-
+response_bert = dynamodb.Table('bert-predictions').scan()
 data = response['Items']
+data_bert = response_bert['Items']
 
 while 'LastEvaluatedKey' in response:
     response = dynamodb.Table('mentions-count').scan(ExclusiveStartKey=response['LastEvaluatedKey'])
@@ -39,6 +41,7 @@ while 'LastEvaluatedKey' in response:
 
 app = dash.Dash()
 df = pd.DataFrame(data=response['Items'], columns=['NROWS', 'mention'])
+df_bert = pd.DataFrame(data=data_bert, columns=['text', 'created', 'class', 'processed'])
 counts = df.NROWS.unique()
 counts.sort()
 part = load_part()
@@ -61,6 +64,11 @@ app.layout = html.Div(children=[
             value=1,
         ),
         dcc.Graph(id="graph"),
+        dt.DataTable(
+            id='table',
+            columns=[{"name": i, "id": i} for i in df_bert.columns],
+            data=df_bert.to_dict('records'),
+        ),
         dcc.Interval(id="trigger", interval=3000)
     ]), html.Div([
         html.H1(children='Metadata visualizations'),
@@ -99,6 +107,14 @@ def display_color(day, refresh_interval):
     fig = px.bar(df[df["NROWS"] >= day], x='mention', y='NROWS',
                  labels={'NROWS': 'number of mentions', 'mention': 'username'})
     return fig
+
+
+@app.callback(Output('table', 'data'), Input('table', 'active_cell'))
+def update_graphs(active_cell):
+    response_bert = dynamodb.Table('bert-predictions').scan()
+    data_bert = response_bert['Items']
+    df_bert = pd.DataFrame(data=data_bert, columns=['text', 'created', 'class', 'processed'])
+    return df_bert.to_dict('records')
 
 
 @app.callback(
