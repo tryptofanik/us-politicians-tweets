@@ -1,0 +1,233 @@
+﻿{
+  "paragraphs": [
+    {
+      "user": "anonymous",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1642795802215_165874035",
+      "id": "paragraph_1642795802215_165874035",
+      "dateCreated": "2022-01-21T20:10:02+0000",
+      "status": "ERROR",
+      "focus": true,
+      "$$hashKey": "object:8792",
+      "text": "%flink.ssql(type=append)\r\nCREATE TABLE AGGR (\r\n                NROWS BIGINT,\r\n                mention string\r\n              )\r\n              PARTITIONED BY (mention)\r\n              WITH (\r\n'connector' = 'kinesis',\r\n'stream' = 'test-mentions-count',\r\n'aws.region' = 'us-east-1',\r\n'scan.stream.initpos' = 'LATEST',\r\n'format' = 'json'\r\n              )",
+      "dateUpdated": "2022-01-21T21:14:05+0000",
+      "dateFinished": "2022-01-21T21:14:06+0000",
+      "dateStarted": "2022-01-21T21:14:06+0000"
+    },
+    {
+      "user": "anonymous",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "FLINK JOB",
+          "tooltip": "View in Flink web UI",
+          "group": "flink",
+          "values": [
+            {
+              "jobUrl": "/flinkdashboard/#/job/3c1d57a3777f2d94837e01cecf78f9f8",
+              "$$hashKey": "object:24483"
+            }
+          ],
+          "interpreterSettingId": "flink"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1642795891803_663016768",
+      "id": "paragraph_1642795891803_663016768",
+      "dateCreated": "2022-01-21T20:11:31+0000",
+      "status": "RUNNING",
+      "focus": true,
+      "$$hashKey": "object:11000",
+      "text": "%flink.ssql(type=batch)\nINSERT INTO AGGR (\nselect \nCOUNT(*) OVER (PARTITION BY REGEXP_EXTRACT(text, '@([A-Za-z0-9]*)') ORDER BY proctime) as NROWS, \nREGEXP_EXTRACT(text, '@([A-Za-z0-9]*)') as mention\nfrom stock\n    )",
+      "dateUpdated": "2022-01-21T22:10:10+0000",
+      "dateFinished": "2022-01-21T22:09:33+0000",
+      "dateStarted": "2022-01-21T22:10:10+0000"
+    },
+    {
+      "text": "%flink.ssql(type=update, parallelism=16, refreshInterval=1000,)\nselect * from aggr",
+      "user": "anonymous",
+      "dateUpdated": "2022-01-21T22:08:28+0000",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sql",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sql",
+        "fontSize": 9,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "lineChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "stackedAreaChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                },
+                "multiBarChart": {
+                  "rotate": {
+                    "degree": "-45"
+                  },
+                  "xLabelStatus": "default"
+                }
+              },
+              "commonSetting": {},
+              "keys": [
+                {
+                  "name": "NROWS",
+                  "index": 0,
+                  "aggr": "sum"
+                }
+              ],
+              "groups": [],
+              "values": [
+                {
+                  "name": "mention",
+                  "index": 1,
+                  "aggr": "sum"
+                }
+              ]
+            },
+            "helium": {}
+          }
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "FLINK JOB",
+          "tooltip": "View in Flink web UI",
+          "group": "flink",
+          "values": [
+            {
+              "jobUrl": "/flinkdashboard/#/job/2dbd3919213e8f4da9087131d1ad219f",
+              "$$hashKey": "object:22885"
+            }
+          ],
+          "interpreterSettingId": "flink"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1642796084130_1441709703",
+      "id": "paragraph_1642796084130_1441709703",
+      "dateCreated": "2022-01-21T20:14:44+0000",
+      "status": "RUNNING",
+      "focus": true,
+      "$$hashKey": "object:11322",
+      "dateFinished": "2022-01-21T22:00:06+0000",
+      "dateStarted": "2022-01-21T22:08:28+0000",
+      "results": {
+        "msg": [
+          {
+            "data": "NROWS\tmention\n1\t@POTUS\n1\t@SenStabenow\n1\t@tedcruz\n1\t@SenTedCruz\n1\t@SenWarren\n1\t@HouseGOP\n1\t@SenFeinstein\n1\t@SenWhitehouse\n1\t@RandPaul\n1\t@TheDemocrats\n1\t@KamalaHarris\n1\t@TomCottonAR\n1\t@brianschatz\n1\t@SenSchumer\n1\t@ChuckGrassley\n1\t@SenDuckworth\n1\t@JimInhofe\n1\t@SenRubioPress\n1\t@SenThomTillis\n1\t@RoyBlunt\n1\t@VP\n1\t@marcorubio\n1\t@MarkWarner\n1\t@SenJohnKennedy\n1\t@SenatorRisch\n1\t@BarackObama\n1\t@SenRonJohnson\n1\t@SenSherrodBrown\n1\t@JoeBiden\n1\t@SenatorTester\n1\t@LindseyGrahamSC\n1\t@amyklobuchar\n1\t@SenDanSullivan\n1\t@senrobportman\n1\tnull\n1\t@PPGWNI\n1\t@SenatorTimScott\n1\t@PattyMurray\n1\t@JohnCornyn\n1\t@MichelleObama\n10\t@tedcruz\n10\t@POTUS\n10\t@VP\n10\t@SenWhitehouse\n10\t@HouseGOP\n10\t@brianschatz\n10\t@RandPaul\n11\t@tedcruz\n11\t@POTUS\n11\t@SenWhitehouse\n11\t@HouseGOP\n11\t@brianschatz\n12\t@tedcruz\n12\t@POTUS\n12\t@SenWhitehouse\n12\t@HouseGOP\n12\t@brianschatz\n13\t@tedcruz\n13\t@POTUS\n13\t@SenWhitehouse\n14\t@tedcruz\n14\t@POTUS\n14\t@SenWhitehouse\n15\t@tedcruz\n15\t@POTUS\n16\t@tedcruz\n16\t@POTUS\n17\t@tedcruz\n17\t@POTUS\n18\t@tedcruz\n18\t@POTUS\n19\t@POTUS\n19\t@tedcruz\n2\t@POTUS\n2\t@SenWarren\n2\t@HouseGOP\n2\t@tedcruz\n2\t@RandPaul\n2\t@SenWhitehouse\n2\t@TomCottonAR\n2\t@KamalaHarris\n2\t@brianschatz\n2\t@SenStabenow\n2\t@VP\n2\t@SenTedCruz\n2\t@marcorubio\n2\t@JoeBiden\n2\t@SenThomTillis\n2\t@TheDemocrats\n2\t@SenatorTester\n2\t@amyklobuchar\n2\t@RoyBlunt\n2\tnull\n2\t@SenSchumer\n2\t@PattyMurray\n20\t@tedcruz\n20\t@POTUS\n21\t@tedcruz\n21\t@POTUS\n22\t@tedcruz\n22\t@POTUS\n23\t@tedcruz\n23\t@POTUS\n24\t@tedcruz\n24\t@POTUS\n25\t@tedcruz\n25\t@POTUS\n26\t@tedcruz\n26\t@POTUS\n27\t@tedcruz\n27\t@POTUS\n28\t@tedcruz\n28\t@POTUS\n29\t@tedcruz\n29\t@POTUS\n3\t@POTUS\n3\t@tedcruz\n3\t@HouseGOP\n3\t@TomCottonAR\n3\t@SenWhitehouse\n3\t@SenTedCruz\n3\t@brianschatz\n3\t@VP\n3\t@marcorubio\n3\t@RandPaul\n3\t@JoeBiden\n3\t@KamalaHarris\n3\t@SenatorTester\n3\t@TheDemocrats\n3\tnull\n3\t@SenThomTillis\n3\t@PattyMurray\n30\t@tedcruz\n30\t@POTUS\n31\t@tedcruz\n31\t@POTUS\n32\t@tedcruz\n32\t@POTUS\n33\t@tedcruz\n33\t@POTUS\n34\t@tedcruz\n34\t@POTUS\n35\t@tedcruz\n35\t@POTUS\n36\t@tedcruz\n36\t@POTUS\n37\t@tedcruz\n37\t@POTUS\n38\t@tedcruz\n38\t@POTUS\n39\t@tedcruz\n4\t@POTUS\n4\t@tedcruz\n4\t@HouseGOP\n4\t@brianschatz\n4\t@VP\n4\t@TomCottonAR\n4\t@SenWhitehouse\n4\t@marcorubio\n4\t@JoeBiden\n4\t@RandPaul\n4\t@KamalaHarris\n4\t@SenTedCruz\n4\t@PattyMurray\n40\t@tedcruz\n41\t@tedcruz\n42\t@tedcruz\n43\t@tedcruz\n44\t@tedcruz\n45\t@tedcruz\n46\t@tedcruz\n47\t@tedcruz\n5\t@tedcruz\n5\t@POTUS\n5\t@HouseGOP\n5\t@VP\n5\t@SenWhitehouse\n5\t@brianschatz\n5\t@RandPaul\n5\t@JoeBiden\n5\t@KamalaHarris\n5\t@marcorubio\n5\t@SenTedCruz\n6\t@tedcruz\n6\t@POTUS\n6\t@SenWhitehouse\n6\t@VP\n6\t@HouseGOP\n6\t@brianschatz\n6\t@JoeBiden\n6\t@RandPaul\n6\t@marcorubio\n7\t@tedcruz\n7\t@POTUS\n7\t@VP\n7\t@SenWhitehouse\n7\t@brianschatz\n7\t@RandPaul\n7\t@HouseGOP\n7\t@JoeBiden\n8\t@tedcruz\n8\t@POTUS\n8\t@SenWhitehouse\n8\t@VP\n8\t@brianschatz\n8\t@RandPaul\n8\t@HouseGOP\n9\t@tedcruz\n9\t@POTUS\n9\t@SenWhitehouse\n9\t@VP\n9\t@brianschatz\n9\t@HouseGOP\n9\t@RandPaul\n",
+            "type": "TABLE"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%flink.ssql\n",
+      "user": "anonymous",
+      "dateUpdated": "2022-01-21T22:08:28+0000",
+      "progress": 0,
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1642802908923_1367905963",
+      "id": "paragraph_1642802908923_1367905963",
+      "dateCreated": "2022-01-21T22:08:28+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:22279"
+    }
+  ],
+  "name": "Untitled Note 1",
+  "id": "2GSU7GT8J",
+  "defaultInterpreterGroup": "flink",
+  "version": "0.9.0",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Untitled Note 1"
+}

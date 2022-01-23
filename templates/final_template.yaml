@@ -106,6 +106,7 @@ Resources:
 # Reddit kinesis data stream
   RedditDynamoDBTable:
     Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
     Properties:
       TableName: RedditPosts
       AttributeDefinitions:
@@ -228,6 +229,7 @@ Resources:
             - 'kinesis:PutRecord'
             - 'kinesis:ListShards'
             - 'kinesis:ListStreams'
+            - 'kinesis:*'
           Resource: '*'
       Roles:
         - !Ref NiFiRole1
@@ -239,6 +241,12 @@ Resources:
       Name: twitter-stream
       ShardCount: 1
 
+  TestKinesisDataStream:
+    Type: 'AWS::Kinesis::Stream'
+    Properties:
+      Name: test-stream
+      ShardCount: 1
+
   TwitterLambdaFunction:
     Type: 'AWS::Lambda::Function'
     DependsOn:
@@ -246,7 +254,7 @@ Resources:
       - LambdaRole
     Properties:
       Code:
-        S3Bucket: danonki-code
+        S3Bucket: danonki-code3
         S3Key: twitter-kinesis-lambda.zip
       Handler: twitter-kinesis-lambda.lambda_handler
       MemorySize: 128
@@ -294,7 +302,7 @@ Resources:
       - LambdaRole
     Properties:
       Code:
-        S3Bucket: danonki-code
+        S3Bucket: danonki-code3
         S3Key: reddit-lambda.zip
       Handler: reddit-lambda.lambda_handler
       MemorySize: 128
@@ -323,6 +331,7 @@ Resources:
     
   TweetsDynamoDBTable:
     Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
     Properties:
       TableName: Tweets
       AttributeDefinitions:
@@ -531,7 +540,7 @@ Resources:
           Effect: Allow
           Action:
             - 's3:GetObject'
-          Resource: 'arn:aws:s3:::danonki-code/'
+          Resource: 'arn:aws:s3:::danonki-code3/'
       Roles:
         - !Ref TwitterStreamerRole
     
@@ -550,6 +559,7 @@ Resources:
             - 'dynamodb:Get*'
             - 'dynamodb:Query'
             - 'dynamodb:List*'
+            - 'dynamo:*'
           Resource: !GetAtt 
             - TweetsDynamoDBTable
             - Arn
@@ -595,7 +605,7 @@ Resources:
         - ScrapperRole
         - Arn
       Code:
-        S3Bucket: danonki-code
+        S3Bucket: danonki-code3
         S3Key: twitter_api_extractor.zip
 
   TwitterMetaExtractor:
@@ -611,7 +621,7 @@ Resources:
         - ScrapperRole
         - Arn
       Code:
-        S3Bucket: danonki-code
+        S3Bucket: danonki-code3
         S3Key: twitter_meta_extractor.zip
     
   TwitterStreamerSG:
