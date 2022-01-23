@@ -10,7 +10,7 @@ import plotly.express as px
 from cloudpathlib import CloudPath
 from dash.dependencies import Input, Output
 from dash_extensions.enrich import Trigger
-
+from datetime import datetime
 # place the credentials file in ~/.aws/
 
 session = boto3.Session(profile_name="default")
@@ -109,11 +109,14 @@ def display_color(day, refresh_interval):
     return fig
 
 
-@app.callback(Output('table', 'data'), Input('table', 'active_cell'))
-def update_graphs(active_cell):
+@app.callback(Output('table', 'data'), [Input('table', 'active_cell'),
+     Trigger("trigger", "n_intervals")])
+def update_graphs(active_cell, refresh_int):
     response_bert = dynamodb.Table('bert-predictions').scan()
     data_bert = response_bert['Items']
     df_bert = pd.DataFrame(data=data_bert, columns=['text', 'created', 'class', 'processed'])
+    df_bert = df_bert.sort_values("processed", ascending=False)
+    df_bert[['created', 'processed']] = df_bert[['created', 'processed']].apply(lambda x: x.apply(lambda xx: datetime.fromtimestamp((int(xx))).strftime('%Y-%m-%d %H:%M:%S')))
     return df_bert.to_dict('records')
 
 
