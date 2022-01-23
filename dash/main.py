@@ -113,7 +113,7 @@ def display_color(day, refresh_interval):
 def update_graphs(active_cell):
     response_bert = dynamodb.Table('bert-predictions').scan()
     data_bert = response_bert['Items']
-    df_bert = pd.DataFrame(data=data_bert, columns=['text', 'created', 'class', 'processed']).head(10)
+    df_bert = pd.DataFrame(data=data_bert, columns=['text', 'created', 'class', 'processed']).sort_values('processed', ascending=False).head(10)
     return df_bert.to_dict('records')
 
 
